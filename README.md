@@ -1,8 +1,10 @@
 # Resumate
 
 A resume builder for NIT Trichy students. Fills in the official placement-format
-resume, exports a pixel-perfect PDF, and (later) matches a pasted job description
-against the student's saved projects.
+resume, exports a pixel-perfect PDF, and includes an AI assistant that matches
+a pasted job description against the student's saved projects.
+
+Live: https://resumate-six-kappa.vercel.app
 
 ## The one idea this project is built around
 
@@ -28,39 +30,68 @@ Python with Pillow.
 
 | Path | What it is |
 |---|---|
-| `src/resume/` | **Sealed renderer.** Components take data as props and return markup — no editor state, no theme, no app awareness. The same components render the on-screen preview and the server-side PDF, which is what makes pixel parity structural. |
+| `src/resume/` | **Sealed renderer.** Components take data as props and return markup — no editor state, no theme, no app awareness. The same components render the on-screen preview, the print-only route, and the server-side PDF, which is what makes pixel parity structural. |
 | `src/pagination/` | `paginate.js` is pure (units + measured heights → pages, no React, no DOM). `useMeasure.js` does the measuring. |
-| `src/data/` | Default template + the canonical section list. |
-| `golden/` | The frozen baseline, its generator, and the archived pre-guide version. See `golden/README.md`. |
+| `src/pages/` | Route-level screens: `AuthScreen`, `Dashboard`, `EditorPage`, `PrintPage` (auth-independent, used by `?golden=1`/`?print=1`), `Settings`, `Privacy`, `Terms`, `AdminDashboard`. `App.jsx` routes between them with plain state — no router dependency. |
+| `src/editor/` | The editor UI (sections, page-break inserters, Format Check panel) and `editor.css` — all app chrome, scoped under `.rm-*` classes, never touching `.resume-*`. |
+| `src/ai/` | The AI assistant panel, wired to the recovered `match-jd` Edge Function. |
+| `src/auth/`, `src/data/`, `src/lib/`, `src/shared/` | Supabase auth, resume list/CRUD, the Supabase client, and `rowMapping.js` (camelCase ⇄ snake_case, isomorphic — imported by both the Vite client and the plain-Node `api/` functions). |
+| `api/` | Vercel serverless functions: `export-pdf.js` (real PDF export), `delete-account.js`, `admin-stats.js`, `admin-user/[id].js`. |
+| `golden/` | The frozen baseline and its generator. See `golden/README.md`. |
 | `reference/` | Pristine snapshot of the original prototype, plus the T&P "Resume Common Mistakes" PDF the format rules come from. |
-| `mockups/` | Clickable UI mockup (Dashboard / Editor / AI panel). Open `editor.html` directly. |
-| `scripts/golden-check.mjs` | The pixel-diff guard. |
+| `mockups/` | The original clickable UI mockup. Superseded by the real app; kept for history. |
+| `schema.sql` | Source of truth for the database schema. Schema changes land here, get reviewed, then the owner applies them by hand — never run directly by an agent. |
+| `scripts/golden-check.mjs`, `scripts/golden-update.mjs` | The pixel-diff guard and the tool to regenerate the baseline when a layout change is intentional. |
 
 ## Rules from the T&P guide
 
-`reference/Resume Common Mistakes.pdf` lists 20 numbered rules. They split three
-ways:
+`reference/Resume Common Mistakes.pdf` lists 20 numbered rules, all now
+enforced one of three ways:
 
 - **Impossible to fail** — fonts, sizes, the full-bleed black line, red-rule
-  geometry, section spacing. These live in the sealed renderer, so a student
-  cannot get them wrong.
-- **Auto-fixable** — leading zeros on CGPA, capitalised first letters,
-  institution name, `~Nil~` sections, missing date ranges, NIMCET rank. These
-  belong in the planned Format Check validator, *not* in the default data.
-- **Needs judgement** — "copied from ChatGPT", photo in TP formals, overall
-  professionalism. Advisory nudges only.
+  geometry, section spacing, photo box aspect. Live in the sealed renderer.
+- **Checked and auto-fixable** — `src/validate/rules.js` (Format Check panel):
+  leading zeros on CGPA, institution name, legend wording, empty/`~Nil~`
+  sections. One click fixes each.
+- **Needs judgement** — "copied from ChatGPT", photo in TP formals. Advisory
+  nudges in the same panel.
 
-One rule is implemented as render logic today: `resolveSectionTitle()` in
-`src/resume/text.jsx` returns "Other Projects" only when internships or work
-experience are shown, otherwise "Projects" (rule #18).
+Rule #18 ("Other Projects" vs "Projects") is render logic:
+`resolveSectionTitle()` in `src/resume/text.jsx`.
 
 ## Status
 
-Done: sealed renderer ported and verified at 0-pixel parity, pure pagination,
-golden-check guard, UI mockup.
+**Working end-to-end, verified against the live deployment and database —
+not just built:**
+- Sealed renderer at 0-pixel parity with the golden reference.
+- Full editor: sections, page-break inserters, Format Check.
+- Supabase auth + per-resume storage (sign up/in, multi-resume dashboard,
+  create/rename/delete, autosave — all confirmed via direct DB queries).
+- AI assistant: real DeepSeek calls confirmed, all four suggestion actions
+  (Replace/Keep Both/Add to Skills/confirm-and-add) verified to persist.
+- PDF export: real auth, real resume data, rate limiting. Verified against a
+  real Vercel serverless deployment — cold ~4.9s, warm ~2.7s render times —
+  and the RLS-based security model was tested, not assumed (a second test
+  user requesting the first user's resume_id gets 404).
+- Privacy policy, terms, self-service account+data deletion.
+- Mobile responsive pass: drawer sidebar, scrollable topbar, horizontally
+  scrollable A4 preview, zero page-level overflow on every screen.
+- Admin dashboard: counters, 30-day chart, per-user drill-down. Negative
+  paths (401/403) verified against the live deployment.
 
-Not started: editor UI, Supabase (auth + multi-resume storage), PDF export
-service, Format Check validator, AI JD-matching, admin dashboard, mobile pass.
+**Known gap, one fix away from fully working:** `SUPABASE_SERVICE_ROLE_KEY`
+in Vercel is the old `eyJ...` JWT format; this project has legacy API keys
+disabled, so every service-role write/read fails with "Legacy API keys are
+disabled" (confirmed via `vercel logs`, not guessed). This blocks:
+export rate-limit enforcement (fails open — exports still work, just
+unlimited), account deletion's actual `auth.admin.deleteUser` call, and the
+admin dashboard's data reads. Fix: replace it with the `sb_secret_...` key
+from Supabase → Project Settings → API Keys. Nothing else needs to change —
+all three were built against this key from the start.
+
+**Explicitly deferred, not started:** Google OAuth (email/password only for
+now), a second (Render/Railway) PDF-export fallback host beyond Vercel +
+`window.print()`.
 
 ## Standing rules for anyone working on this
 
