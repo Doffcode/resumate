@@ -1,29 +1,36 @@
 // Default resume template + canonical section list.
-// Per-student content lives in the database; this is only the empty-state seed.
+//
+// This is a neutral placeholder every new student starts from — deliberately
+// NOT any real person's resume. It doubles as the fixture the golden-reference
+// pixel check renders, so changing it means regenerating golden/.
+//
+// The example content is written to model the T&P guide's rules: full
+// institution name, CGPA with no leading zero, capitalised first letters, and
+// date ranges that fit on one line.
 export const defaultResume = {
   personalInfo: {
-    name: "SHIVANSH SHARMA",
-    degree: "M.Tech - DA",
-    gender: "Male",
-    dob: "02/01/2002",
+    name: "STUDENT NAME",
+    degree: "M.Tech - Data Analytics",
+    gender: "Gender",
+    dob: "DD/MM/YYYY",
     email: "tp@nitt.edu",
     contact: "+91-431-2501081",
     logo: "", // fallback to defaultLogo
     photo: "" // fallback to defaultPhoto
   },
   education: [
-    { id: 1, year: "2025", degree: "M. Tech DA", institution: "National Institute of Technology, Tiruchirappalli", grade: "7.52" },
-    { id: 2, year: "2024", degree: "B. Tech CSE", institution: "Shri Mata Vaishno Devi University, Jammu&Kashmir", grade: "7.18" },
-    { id: 3, year: "2019", degree: "Class XII", institution: "Mahanand Awasthi Inter College, UP Board", grade: "64.6%" },
-    { id: 4, year: "2017", degree: "Class X", institution: "St. Peter Inter College, Nanpara, ICSE", grade: "89.2%" }
+    { id: 1, year: "2027", degree: "M. Tech Data Analytics", institution: "National Institute of Technology, Tiruchirappalli", grade: "8.50*" },
+    { id: 2, year: "2025", degree: "B. Tech CSE", institution: "Your Undergraduate College, City", grade: "8.20" },
+    { id: 3, year: "2021", degree: "Class XII", institution: "Your Senior Secondary School, Board", grade: "90.0%" },
+    { id: 4, year: "2019", degree: "Class X", institution: "Your School, Board", grade: "92.0%" }
   ],
   educationNote: "* - Upto 2nd semester",
   internships: [
     {
       id: 1,
-      title: "Summer Internship training at excellence technologies",
-      date: "Feb 2024 - May 2024",
-      description: "Underwent an Internship training program at Excellence Technologies. The training involved learning different concepts of machine learning along with application in real world. The final project contained a model which could do media control using hand gestures.",
+      title: "Summer Internship, Organisation Name:",
+      date: "May 2026 - Jul 2026",
+      description: "Describe what you built and the technologies you used. Start with a capital letter, keep it to two or three lines, and mention the outcome rather than only the tools.",
       bullets: [],
       pageBreak: false
     }
@@ -31,60 +38,51 @@ export const defaultResume = {
   projects: [
     {
       id: 1,
-      title: "Handwritten digit Recognition:",
-      date: "Feb 2022- April 2022",
-      description: "In this project, i made a model that recognises handwritten digits of MNIST data-set. Learned about various technologies like Open CV, Tensor Flow, understood the basics of image recognition and hoe to implement it.",
+      title: "Project Title:",
+      date: "Jan 2026 - Mar 2026",
+      description: "Describe the problem the project solves, the approach you took and the technologies involved. Keep the tense consistent and start with a capital letter.",
       bullets: [],
       pageBreak: false
     },
     {
       id: 2,
-      title: "Media control using hand gestures",
-      date: "March 2024- Apr 2024",
-      description: "In this project, we made a model that can control media players using hand gestures. In this we learned about CNN and how to make ittune itfor specific purpose in image classification.",
+      title: "Second Project Title:",
+      date: "Aug 2025 - Nov 2025",
+      description: "A second example entry. Replace this text with your own project. Mention measurable results where you have them, such as accuracy, latency or users served.",
       bullets: [],
       pageBreak: false
     }
   ],
   skills: [
-    { id: 1, label: "Programming Languages", value: "C, C++, Python", pageBreak: false },
-    { id: 2, label: "Engineering Software", value: "Google Colab", pageBreak: false },
-    { id: 3, label: "Other Software", value: "Microsoft Word, PowerPoint, Excel, Visual Studio code", pageBreak: false }
+    { id: 1, label: "Programming Languages", value: "C, C++, Python, Java", pageBreak: false },
+    { id: 2, label: "Engineering Software", value: "MATLAB, Google Colab", pageBreak: false },
+    { id: 3, label: "Other Software", value: "Microsoft Word, PowerPoint, Excel, Visual Studio Code", pageBreak: false }
   ],
   areas: [
     { id: 1, text: "Data Structures and Algorithms", pageBreak: false },
-    { id: 2, text: "Operating System", pageBreak: false },
+    { id: 2, text: "Operating Systems", pageBreak: false },
     { id: 3, text: "Machine Learning", pageBreak: false }
   ],
   positions: [
     {
       id: 1,
-      title: "Yoga Instructor:",
-      date: "Nov 2023- Jan 2024",
-      description: "Worked as a yoga instructor along with my senior under our yoga teacher as a part of nss in SMVDU",
-      bullets: [],
-      pageBreak: false
-    },
-    {
-      id: 2,
-      title: "Group leader:",
-      date: "Aug 2023",
-      description: "Worked as a group leader from our batch in debate competition for our house (Akash) in SMVDU",
+      title: "Position Held, Club or Society:",
+      date: "Nov 2025 - Jan 2026",
+      description: "Describe the responsibility you held and what you organised or led. Remove this section entirely if you have none — do not write Nil.",
       bullets: [],
       pageBreak: false
     }
   ],
   extracurriculars: {
     social: [
-      { id: 1, text: "Participated in a Half marathon held in Katra in 2023." },
-      { id: 2, text: "Participated in Youth Parliament form our house" },
-      { id: 3, text: "Worked as a teacher for underprivileged student under our college initiative Vikalp" }
+      { id: 1, text: "Volunteered for a social initiative or community programme" },
+      { id: 2, text: "Participated in a college society or cultural event" },
+      { id: 3, text: "Taught or mentored students under a college outreach initiative" }
     ],
     sport: [
-      { id: 1, text: "Participated in 100m, 400m, and 1600m in SMVDU" },
-      { id: 2, text: "Participated in badminton tournamentin SMVDU" },
-      { id: 3, text: "Participated in chess tournament in SMVDU" },
-      { id: 4, text: "Third place in group Debate competition from our house in SMVDU" }
+      { id: 1, text: "Represented the department in an inter-department tournament" },
+      { id: 2, text: "Participated in an athletics or team sport event" },
+      { id: 3, text: "Secured a position in an intra-college sports competition" }
     ],
     sportBreak: false,
     socialBreak: false
@@ -103,7 +101,7 @@ export const defaultResume = {
     extracurriculars: false
   },
   // Which sections appear on the resume. Internships & Positions are off by
-  // default to match the target format, but can be toggled on in Settings.
+  // default to match the target format, but can be toggled on in the editor.
   sectionVisibility: {
     education: true,
     internships: false,
@@ -118,6 +116,7 @@ export const defaultResume = {
   }
 };
 
+// All editable sections in their canonical order. Which ones render on the
 // resume is controlled per-section by data.sectionVisibility.
 export const allSections = [
   { id: 'education', title: 'Educational Qualification', type: 'education' },

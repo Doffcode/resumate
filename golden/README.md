@@ -6,9 +6,9 @@ verified by rendering the app and pixel-diffing against `page-1.png` /
 
 | File | What it is |
 |---|---|
-| `golden-reference.pdf` | Current baseline. sha256 `f41f6a61…` |
+| `golden-reference.pdf` | Current baseline. sha256 `c0530798…` |
 | `page-1.png`, `page-2.png` | Same, rasterised at 110 DPI — the pixel-diff targets |
-| `generator/` | Copy of the original prototype, patched to the T&P rules. Renders the baseline. |
+| `generator/` | Superseded. The app itself now renders the baseline (it was verified 0-pixel identical to this). Kept only as history. |
 | `archive/golden-v1-preguide.pdf` | The Aug 10 prototype output, before the Common Mistakes rules were applied |
 
 Source of the rules: `../reference/Resume Common Mistakes.pdf` (T&P, 8 pages,
@@ -37,14 +37,18 @@ first page should not be half blank." The default template leaves page 1 roughly
 ## Regenerating the baseline
 
 ```bash
-cd generator && npm run build
-cd dist && python3 -m http.server 8903 &
-google-chrome-stable --headless=new --disable-gpu --no-sandbox \
-  --virtual-time-budget=10000 --run-all-compositor-stages-before-draw \
-  --no-pdf-header-footer --print-to-pdf=../../golden-reference.pdf \
-  http://localhost:8903/
-cd .. && pdftoppm -png -r 110 golden-reference.pdf page
+npm run build && npm run golden:update
 ```
+
+Only when the layout change is intended. Review `golden/page-*.png` by eye
+afterwards — `golden:check` passes by construction against whatever baseline
+exists, so it only protects a baseline you have actually looked at.
 
 `generator/node_modules` is a symlink to the original prototype's. If that
 prototype is ever deleted, run `npm install` inside `generator/` instead.
+
+## Fixture
+
+The baseline renders `src/data/defaultResume.js`, a neutral placeholder
+template — deliberately not any real student's resume. Changing that file
+changes the golden, so regenerate and re-review when you do.
