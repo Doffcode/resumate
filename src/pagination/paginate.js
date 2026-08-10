@@ -74,6 +74,8 @@ export function paginate(units, contentHeights, margins, availableFirst, availab
         }
       }
       if (breakNow) {
+        cur.used = used;
+        cur.available = availFor(cur.isFirstPage);
         pages.push(cur);
         cur = { isFirstPage: false, units: [] };
         used = 0;
@@ -85,7 +87,11 @@ export function paginate(units, contentHeights, margins, availableFirst, availab
     used += cur.units.length === 1 ? h : mt + h;
   });
 
-  if (cur.units.length > 0) pages.push(cur);
+  if (cur.units.length > 0) {
+    cur.used = used;
+    cur.available = availFor(cur.isFirstPage);
+    pages.push(cur);
+  }
   if (pages.length === 0) pages.push({ isFirstPage: true, units: [] });
 
   // When a section's items continue onto the next page, repeat its heading at

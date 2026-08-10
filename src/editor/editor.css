@@ -1,0 +1,212 @@
+/* App chrome. Everything here is scoped under .rm-* class names and must never
+   style a .resume-* element — the sealed renderer owns its own CSS entirely.
+   If you find yourself writing `.resume-` in this file, stop. */
+
+:root {
+  --rm-bg: #f7f7f8;
+  --rm-surface: #fff;
+  --rm-surface-2: #fbfbfc;
+  --rm-surface-3: #f2f2f4;
+  --rm-border: #e8e8ea;
+  --rm-border-strong: #d9d9de;
+  --rm-text: #18181b;
+  --rm-text-2: #5c5c66;
+  --rm-text-3: #8e8e98;
+  --rm-accent: #4f46e5;
+  --rm-accent-hover: #4338ca;
+  --rm-accent-soft: #eef2ff;
+  --rm-accent-border: #c7d2fe;
+  --rm-green: #15803d;
+  --rm-amber: #b45309;
+  --rm-amber-soft: #fffbeb;
+  --rm-amber-border: #fde68a;
+  --rm-red: #dc2626;
+  --rm-r: 10px;
+  --rm-r-sm: 7px;
+  --rm-shadow-sm: 0 1px 2px rgba(16, 17, 26, .04), 0 1px 3px rgba(16, 17, 26, .05);
+  --rm-shadow-lg: 0 12px 32px rgba(16, 17, 26, .10), 0 2px 8px rgba(16, 17, 26, .06);
+  --rm-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body, #root { height: 100%; }
+body {
+  font-family: var(--rm-font);
+  background: var(--rm-bg);
+  color: var(--rm-text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+.rm-app button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+.rm-app input, .rm-app textarea { font: inherit; color: inherit; }
+
+.rm-app { display: flex; flex-direction: column; height: 100vh; }
+
+/* ---------- top bar ---------- */
+.rm-topbar {
+  height: 52px; flex: 0 0 52px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 14px;
+  background: var(--rm-surface);
+  border-bottom: 1px solid var(--rm-border);
+  z-index: 20;
+}
+.rm-brand { display: flex; align-items: center; gap: 8px; font-weight: 650; font-size: 15px; letter-spacing: -.01em; }
+.rm-mark {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: linear-gradient(140deg, #6366f1, #4f46e5);
+  display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 700;
+}
+.rm-sep { width: 1px; height: 20px; background: var(--rm-border); }
+.rm-saved { display: flex; align-items: center; gap: 6px; color: var(--rm-text-3); font-size: 12.5px; }
+.rm-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rm-green); }
+.rm-spacer { flex: 1; }
+
+.rm-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 32px; padding: 0 12px; border-radius: var(--rm-r-sm);
+  font-size: 13.5px; font-weight: 550; white-space: nowrap;
+  transition: background .12s, border-color .12s;
+}
+.rm-btn-ghost { color: var(--rm-text-2); }
+.rm-btn-ghost:hover { background: var(--rm-surface-3); color: var(--rm-text); }
+.rm-btn-secondary { background: var(--rm-surface); border: 1px solid var(--rm-border-strong); box-shadow: var(--rm-shadow-sm); }
+.rm-btn-secondary:hover { background: var(--rm-surface-2); }
+.rm-btn-primary { background: var(--rm-accent); color: #fff; }
+.rm-btn-primary:hover { background: var(--rm-accent-hover); }
+.rm-icon { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+
+/* ---------- workspace ---------- */
+.rm-workspace { flex: 1; display: flex; min-height: 0; }
+
+.rm-editor {
+  width: 400px; flex: 0 0 400px;
+  background: var(--rm-surface);
+  border-right: 1px solid var(--rm-border);
+  display: flex; flex-direction: column; min-height: 0;
+}
+.rm-editor-head {
+  padding: 12px 14px 10px; border-bottom: 1px solid var(--rm-border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rm-editor-head h2 { font-size: 13px; font-weight: 650; letter-spacing: .02em; text-transform: uppercase; color: var(--rm-text-3); }
+.rm-editor-scroll { flex: 1; overflow-y: auto; padding: 8px 10px 60px; }
+.rm-editor-scroll::-webkit-scrollbar { width: 10px; }
+.rm-editor-scroll::-webkit-scrollbar-thumb { background: #dcdce1; border-radius: 99px; border: 3px solid var(--rm-surface); }
+
+.rm-section { border: 1px solid var(--rm-border); border-radius: var(--rm-r); margin-bottom: 7px; }
+.rm-section.is-open { box-shadow: var(--rm-shadow-sm); border-color: var(--rm-border-strong); }
+.rm-section.is-off { opacity: .55; }
+.rm-sec-head { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: var(--rm-r); cursor: pointer; user-select: none; }
+.rm-sec-head:hover { background: var(--rm-surface-2); }
+.rm-sec-name { font-weight: 550; font-size: 13.5px; flex: 1; text-align: left; }
+.rm-count { font-size: 11.5px; color: var(--rm-text-3); background: var(--rm-surface-3); padding: 1px 6px; border-radius: 20px; font-weight: 550; }
+.rm-chevron { color: var(--rm-text-3); transition: transform .16s; }
+.rm-section.is-open .rm-chevron { transform: rotate(90deg); }
+.rm-sec-body { padding: 2px 11px 12px; border-top: 1px solid var(--rm-border); }
+
+/* switch */
+.rm-switch { position: relative; width: 30px; height: 18px; flex: 0 0 auto; display: inline-block; }
+.rm-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 2; }
+.rm-track { position: absolute; inset: 0; background: #d4d4d9; border-radius: 99px; transition: background .16s; pointer-events: none; }
+.rm-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .16s; pointer-events: none; }
+.rm-switch input:checked ~ .rm-track { background: var(--rm-accent); }
+.rm-switch input:checked ~ .rm-thumb { transform: translateX(12px); }
+
+/* fields */
+.rm-field { margin-top: 11px; }
+.rm-field label { display: block; font-size: 12px; font-weight: 550; color: var(--rm-text-2); margin-bottom: 5px; }
+.rm-input, .rm-textarea {
+  width: 100%; padding: 7px 10px;
+  background: var(--rm-surface);
+  border: 1px solid var(--rm-border-strong); border-radius: var(--rm-r-sm);
+  font-size: 13.5px; transition: border-color .12s, box-shadow .12s;
+}
+.rm-input:focus, .rm-textarea:focus { outline: none; border-color: var(--rm-accent); box-shadow: 0 0 0 3px rgba(79,70,229,.12); }
+.rm-textarea { resize: vertical; min-height: 66px; line-height: 1.5; }
+.rm-row { display: flex; gap: 9px; }
+.rm-row > * { flex: 1; min-width: 0; }
+.rm-hint { font-size: 11.5px; color: var(--rm-text-3); margin-top: 6px; }
+
+/* item card */
+.rm-item { border: 1px solid var(--rm-border); border-radius: var(--rm-r-sm); background: var(--rm-surface-2); padding: 9px 10px; margin-top: 9px; }
+.rm-item:hover { border-color: var(--rm-border-strong); }
+.rm-item-head { display: flex; align-items: center; gap: 6px; }
+.rm-item-title { font-weight: 550; font-size: 13px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rm-iconbtn { width: 24px; height: 24px; border-radius: 5px; display: grid; place-items: center; color: var(--rm-text-3); transition: background .12s, color .12s; }
+.rm-iconbtn:hover:not(:disabled) { background: var(--rm-surface-3); color: var(--rm-text); }
+.rm-iconbtn:disabled { opacity: .3; cursor: not-allowed; }
+.rm-iconbtn.is-danger:hover { background: #fef2f2; color: var(--rm-red); }
+
+.rm-bullet-row { display: flex; gap: 7px; align-items: center; margin-bottom: 6px; }
+.rm-bullet-dot { color: var(--rm-text-3); flex: 0 0 auto; }
+
+/* page-break inserter */
+.rm-breaker { display: flex; align-items: center; gap: 8px; margin-top: 9px; height: 20px; cursor: pointer; opacity: .35; transition: opacity .14s; width: 100%; }
+.rm-breaker:hover, .rm-breaker.is-on { opacity: 1; }
+.rm-breaker .rm-line { flex: 1; height: 1px; background: var(--rm-border-strong); }
+.rm-breaker .rm-tag { font-size: 11px; color: var(--rm-text-3); font-weight: 550; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--rm-border-strong); background: var(--rm-surface); white-space: nowrap; }
+.rm-breaker:hover .rm-tag, .rm-breaker.is-on .rm-tag { border-color: var(--rm-accent-border); color: var(--rm-accent); background: var(--rm-accent-soft); }
+.rm-breaker.is-on .rm-line { background: var(--rm-accent-border); }
+
+.rm-add {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; margin-top: 10px; padding: 8px;
+  border: 1px dashed var(--rm-border-strong); border-radius: var(--rm-r-sm);
+  color: var(--rm-text-2); font-size: 13px; font-weight: 550; transition: all .12s;
+}
+.rm-add:hover:not(:disabled) { border-color: var(--rm-accent); color: var(--rm-accent); background: var(--rm-accent-soft); }
+.rm-add:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ---------- preview ---------- */
+.rm-preview { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--rm-bg); }
+.rm-preview-bar {
+  height: 44px; flex: 0 0 44px; display: flex; align-items: center; gap: 10px;
+  padding: 0 14px; border-bottom: 1px solid var(--rm-border); background: rgba(255,255,255,.75);
+}
+.rm-pill { display: flex; align-items: center; gap: 2px; background: var(--rm-surface); border: 1px solid var(--rm-border-strong); border-radius: var(--rm-r-sm); padding: 2px; }
+.rm-pill button { padding: 3px 9px; border-radius: 5px; font-size: 12.5px; font-weight: 550; color: var(--rm-text-2); }
+.rm-pill button:hover { background: var(--rm-surface-3); color: var(--rm-text); }
+.rm-zoomval { min-width: 46px; text-align: center; color: var(--rm-text); font-size: 12.5px; font-weight: 550; }
+.rm-pagelabel { font-size: 12.5px; color: var(--rm-text-3); font-weight: 500; }
+
+.rm-warn {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--rm-amber-soft); border: 1px solid var(--rm-amber-border);
+  color: var(--rm-amber); border-radius: var(--rm-r-sm);
+  padding: 5px 10px; font-size: 12.5px; font-weight: 550;
+}
+
+.rm-canvas { flex: 1; overflow: auto; padding: 26px 0 60px; }
+.rm-canvas::-webkit-scrollbar { width: 12px; height: 12px; }
+.rm-canvas::-webkit-scrollbar-thumb { background: #d6d6dc; border-radius: 99px; border: 3px solid var(--rm-bg); }
+.rm-pages { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+
+/* The A4 page itself is styled entirely by the sealed renderer. This only
+   scales it for on-screen zoom and adds the drop shadow. */
+.rm-scaler { transform-origin: top center; }
+.rm-scaler .resume-page { box-shadow: var(--rm-shadow-lg); }
+
+/* ---------- print ----------
+   Everything that is app chrome disappears; only the sealed .resume-page
+   elements survive. The renderer's own print rules live in resume.css. */
+@media print {
+  body { overflow: visible !important; height: auto !important; background: #fff !important; }
+  .rm-topbar, .rm-editor, .rm-preview-bar { display: none !important; }
+  .rm-app, .rm-workspace, .rm-preview {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .rm-canvas {
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    background: none !important;
+  }
+  .rm-pages { display: block !important; gap: 0 !important; }
+  /* Screen zoom must never reach the PDF. */
+  .rm-scaler { transform: none !important; }
+  .rm-scaler .resume-page { box-shadow: none !important; }
+}

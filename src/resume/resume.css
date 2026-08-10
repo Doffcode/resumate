@@ -390,21 +390,11 @@
     height: auto !important;
   }
   
-  .editor-sidebar {
-    display: none !important;
-  }
 
   .resume-measure {
     display: none !important;
   }
 
-  .preview-area {
-    padding: 0 !important;
-    background: none !important;
-    overflow: visible !important;
-    height: auto !important;
-    display: block !important;
-  }
   
   .resume-page {
     box-shadow: none !important;

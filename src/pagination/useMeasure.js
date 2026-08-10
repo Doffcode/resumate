@@ -8,6 +8,7 @@ export function useMeasure(data, allSections) {
   const units = buildUnits(data, allSections);
 
   const [pages, setPages] = useState(() => staticPaginate(data, allSections));
+  const [fill, setFill] = useState([]);
   const [fontTick, setFontTick] = useState(0);
 
   const contentRef = useRef(null);
@@ -48,7 +49,13 @@ export function useMeasure(data, allSections) {
     );
 
     setPages((prev) => (pagesSignature(prev) === pagesSignature(next) ? prev : next));
+
+    // Fill ratio per page, rounded so float jitter cannot loop this effect.
+    const nextFill = next.map((p) =>
+      p.available > 0 ? Math.round((p.used / p.available) * 100) : 0
+    );
+    setFill((prev) => (prev.join() === nextFill.join() ? prev : nextFill));
   }, [data, baseFontSize, fontTick, allSections]);
 
-  return { pages, units, baseFontSize, contentRef, headerRef, unitRefs };
+  return { pages, units, fill, baseFontSize, contentRef, headerRef, unitRefs };
 }
