@@ -3,3 +3,4 @@ dist
 .env
 .env.local
 golden/generator/node_modules
+supabase/.temp
