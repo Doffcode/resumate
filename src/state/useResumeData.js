@@ -14,8 +14,9 @@ const blank = () => ({ ...clone(defaultResume), schemaVersion: SCHEMA_VERSION })
 // Brings a resume up to the current shape WITHOUT overwriting user edits: only
 // fills in keys the saved copy is missing. Future schema versions add cases
 // here — this is what stops a default-data change from silently clobbering a
-// student's saved resume.
-function migrate(saved) {
+// student's saved resume. Exported so PrintPage can apply the same
+// shape-safety to data injected from the export function.
+export function migrate(saved) {
   const data = { ...blank(), ...saved };
   for (const key of ['personalInfo', 'layoutSettings', 'pageBreaks', 'sectionVisibility', 'footer']) {
     data[key] = { ...defaultResume[key], ...(saved[key] || {}) };

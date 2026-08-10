@@ -4,23 +4,31 @@ import { useAuth } from './auth/useAuth.js';
 import AuthScreen from './auth/AuthScreen.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import EditorPage from './pages/EditorPage.jsx';
+import PrintPage from './pages/PrintPage.jsx';
 import './editor/editor.css';
 
-// scripts/golden-check.mjs and golden-check.mjs hit this directly so the
-// pixel-diff tests the sealed renderer against the fixed default fixture,
-// completely independent of auth state or which Supabase project is
-// configured in the build. Without this, adding real accounts would silently
-// make the golden baseline untestable (the root route would show a login
-// screen instead of a resume) — caught by golden:check going from PASS to
-// "page count: candidate 1, golden 2" the moment auth was wired in.
-const isGoldenCheck = () => new URLSearchParams(location.search).has('golden');
+// Two auth-independent routes, both served by the chrome-free PrintPage:
+//   ?golden=1 — golden-check.mjs/golden-update.mjs. No injected data, so this
+//               always renders the fixed default fixture. Without this,
+//               adding real accounts silently made the golden baseline
+//               untestable (root route showed a login screen instead of a
+//               resume) — caught by golden:check going from PASS to
+//               "page count: candidate 1, golden 2" the moment auth landed.
+//   ?print=1  — api/export-pdf.js. It injects a real, already
+//               ownership-verified resume via page.evaluateOnNewDocument
+//               before navigating here, so Puppeteer never needs to hold a
+//               Supabase session at all.
+const isPrintRoute = () => {
+  const p = new URLSearchParams(location.search);
+  return p.has('golden') || p.has('print');
+};
 
 export default function App() {
   const auth = useAuth();
   const [openResumeId, setOpenResumeId] = useState(null);
 
-  if (isGoldenCheck()) {
-    return <EditorPage resumeId={null} onBack={null} />;
+  if (isPrintRoute()) {
+    return <PrintPage />;
   }
 
   // No Supabase configured at all: skip accounts entirely and fall back to a

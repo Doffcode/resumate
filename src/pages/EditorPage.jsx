@@ -7,6 +7,7 @@ import Editor from '../editor/Editor.jsx';
 import { Icon, icons } from '../editor/controls.jsx';
 import FormatCheck, { useFormatCheck } from '../editor/FormatCheck.jsx';
 import AiPanel from '../ai/AiPanel.jsx';
+import { exportPdf } from '../lib/exportPdf.js';
 
 // Repaginating on every keystroke is wasteful; the preview settles 400ms after
 // typing stops. The editor fields themselves stay fully responsive.
@@ -28,6 +29,20 @@ export default function EditorPage({ resumeId, onBack }) {
   const { pages, units, fill, baseFontSize, contentRef, headerRef, unitRefs } = useMeasure(preview, allSections);
   const [zoom, setZoom] = useState(100);
   const [panel, setPanel] = useState('check'); // 'check' | 'ai' | null
+  const [exporting, setExporting] = useState(false);
+  const [exportNotice, setExportNotice] = useState(null);
+
+  const handleExport = async () => {
+    setExporting(true);
+    setExportNotice(null);
+    const result = await exportPdf(resumeId);
+    setExporting(false);
+    if (result.status === 'error') {
+      setExportNotice({ kind: 'error', text: result.message });
+    } else if (result.status === 'fallback') {
+      setExportNotice({ kind: 'warn', text: `Used your browser's print dialog instead — ${result.reason}` });
+    }
+  };
   // Checks run against live data, not the debounced copy, so a fix reads as instant.
   const check = useFormatCheck(rd.data, fill);
 
@@ -78,11 +93,18 @@ export default function EditorPage({ resumeId, onBack }) {
           <Icon d={icons.spark} />
           AI Assistant
         </button>
-        <button className="rm-btn rm-btn-secondary" onClick={() => window.print()}>
+        <button className="rm-btn rm-btn-secondary" onClick={handleExport} disabled={exporting}>
           <Icon d={icons.download} />
-          Export PDF
+          {exporting ? 'Exporting…' : 'Export PDF'}
         </button>
       </header>
+
+      {exportNotice && (
+        <div className={`rm-notice${exportNotice.kind === 'error' ? ' is-error' : ''}`} style={{ margin: '0 14px', marginTop: 8 }}>
+          {exportNotice.text}
+          <button className="rm-btn rm-btn-ghost" style={{ height: 22, padding: '0 6px', marginLeft: 8 }} onClick={() => setExportNotice(null)}>Dismiss</button>
+        </div>
+      )}
 
       <div className="rm-workspace">
         <Editor rd={rd} />
