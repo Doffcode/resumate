@@ -1,17 +1,27 @@
 import { useState, useCallback } from 'react';
 import { supabase, isConnected } from '../lib/supabase.js';
 
-// Calls the match-jd Edge Function. Contract taken from the recovered
-// supabase/functions/match-jd/index.ts, not guessed:
+// Calls the match-jd Edge Function. Contract confirmed against a REAL call
+// (not just the recovered source, which describes the inner shape but not
+// the response wrapper) — the actual response nests everything under
+// `suggestions`:
 //
 //   match mode   { resume_id, job_description_text }
-//     -> { rewritten_projects: [{ original_index, title, date, description }],
-//          missing_skills: [{ category, name }],
-//          missing_experiences: [string],
-//          combined_project_suggestion: { title, date, description } }
+//     -> { success: true, suggestion_id,
+//          suggestions: {
+//            rewritten_projects: [{ original_index, title, date, description }],
+//            missing_skills: [{ category, name }],
+//            missing_experiences: [string],
+//            combined_project_suggestion: { title, date, description }
+//          } }
+//     `analyse()` below unwraps `.suggestions` so callers only ever see the
+//     inner shape — found the hard way: a real call returned 200 with real
+//     content, but the panel silently showed nothing because it was reading
+//     result.rewritten_projects instead of result.suggestions.rewritten_projects.
 //
 //   draft mode   { resume_id, mode: 'draft_project', missing_requirement }
 //     -> { success: true, drafted_project: { title, date, description } }
+//     (flat already — no unwrap needed; unused by the UI so far)
 //
 // The function requires a Bearer token and verifies resume ownership (403).
 export function useJdMatch() {
@@ -34,8 +44,9 @@ export function useJdMatch() {
     setState({ status: 'loading', result: null, error: null });
     try {
       const data = await call({ resume_id: resumeId, job_description_text: jdText });
-      setState({ status: 'done', result: data, error: null });
-      return data;
+      const suggestions = data?.suggestions || data; // tolerate either shape
+      setState({ status: 'done', result: suggestions, error: null });
+      return suggestions;
     } catch (e) {
       setState({ status: 'error', result: null, error: e.message });
       return null;
