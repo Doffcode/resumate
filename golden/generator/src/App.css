@@ -1,0 +1,741 @@
+/* App.css - Resume Builder styling system */
+
+/* Lato = resume body/headings, Cambria = footer, Arial = education legend */
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/fonts/lato-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/fonts/lato-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/fonts/lato-italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Cambria';
+  src: url('./assets/fonts/cambria-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Arial';
+  src: url('./assets/fonts/arial-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  /* Editor Theme (Premium Dark Mode) */
+  --bg-editor: #121214;
+  --bg-sidebar: #1a1a1e;
+  --bg-card: #232329;
+  --border-color: #32323d;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --success-color: #10b981;
+  --success-hover: #059669;
+
+  /* Resume Theme (Strict Standard White A4 - matches Nirvighna target PDF) */
+  --resume-bg: #ffffff;
+  --resume-text: #000000;
+  --resume-red: #c00000;
+  --resume-blue: #4f81bd;
+  --resume-grey-border: #000000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-editor);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* App Layout */
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Sidebar Editor */
+.editor-sidebar {
+  width: 480px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+  z-index: 10;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.editor-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(26, 26, 30, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.editor-header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.editor-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* Scrollbar styling for sidebar */
+.editor-content::-webkit-scrollbar {
+  width: 6px;
+}
+.editor-content::-webkit-scrollbar-track {
+  background: var(--bg-sidebar);
+}
+.editor-content::-webkit-scrollbar-thumb {
+  background: #3e3e4a;
+  border-radius: 3px;
+}
+.editor-content::-webkit-scrollbar-thumb:hover {
+  background: #525265;
+}
+
+/* Collapsible Form Section */
+.form-section {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-section-header {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.form-section-header:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.form-section-content {
+  padding: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.chevron-icon {
+  transition: transform 0.2s ease;
+  color: var(--text-secondary);
+}
+.chevron-icon.open {
+  transform: rotate(180deg);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+textarea {
+  resize: vertical;
+}
+
+/* Image Upload controls */
+.image-upload-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.image-preview-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+  background-color: #fff;
+}
+.file-input-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  padding: 8px 14px;
+  background-color: #2a2a35;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.file-input-btn:hover {
+  background-color: #343442;
+}
+.file-input-btn input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  font-size: 100px;
+  cursor: pointer;
+}
+
+/* Item List for Dynamic Sections (Projects, Internships, etc.) */
+.list-item-card {
+  background-color: rgba(0, 0, 0, 0.15);
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.list-item-card:hover {
+  border-style: solid;
+}
+.list-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.item-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn-icon-danger {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s, background-color 0.2s;
+}
+.btn-icon-danger:hover {
+  color: var(--danger-color);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 10px;
+  background-color: #2a2a35;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+  margin-top: 5px;
+}
+.btn-secondary:hover {
+  background-color: #343442;
+}
+
+.btn-primary {
+  padding: 10px 18px;
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Educational qualification table editor styling */
+.table-editor-row {
+  display: grid;
+  grid-template-columns: 80px 100px 1fr 80px 40px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.table-editor-row input {
+  padding: 8px;
+}
+
+/* Preview Area */
+.preview-area {
+  flex-grow: 1;
+  background-color: #2d2d34;
+  overflow-y: auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.preview-area::-webkit-scrollbar {
+  width: 8px;
+}
+.preview-area::-webkit-scrollbar-track {
+  background: #2d2d34;
+}
+.preview-area::-webkit-scrollbar-thumb {
+  background: #464654;
+  border-radius: 4px;
+}
+
+/* RESUME SHEET LAYOUT */
+/* Replicates exact A4 margins and styles from the target PDF */
+.resume-page {
+  width: 210mm;
+  height: 297mm;
+  background-color: var(--resume-bg);
+  color: var(--resume-text);
+  padding: 14mm 13mm 30mm 13mm;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  position: relative;
+  box-sizing: border-box;
+  margin-bottom: 30px;
+  flex-shrink: 0;
+  overflow: hidden;
+  font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+  line-height: 1.2;
+}
+
+/* Resume typography & elements (matches target PDF header) */
+.resume-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 0.4em;
+  position: relative;
+}
+
+.resume-logo-container {
+  width: 37mm;
+  height: 36mm;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.resume-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.resume-info {
+  flex-grow: 1;
+  padding-left: 0.6em;
+  padding-right: 1em;
+}
+.resume-name {
+  font-size: 1.5em; /* 18pt at default */
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 1.15;
+  margin-bottom: 0.15em;
+}
+.resume-subname {
+  font-size: 0.92em; /* 11pt */
+  font-weight: normal;
+  line-height: 1.3;
+  margin-bottom: 0.55em;
+}
+.resume-details {
+  font-size: 0.92em; /* 11pt */
+  line-height: 1.4;
+}
+.resume-detail-line {
+  white-space: nowrap;
+}
+.resume-detail-label {
+  font-weight: normal;
+}
+
+.resume-photo-container {
+  /* Guide TIPS: official box is 1.23in wide x 1.35in tall. */
+  width: 31.24mm;
+  height: 34.29mm;
+  flex-shrink: 0;
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #fff;
+}
+.resume-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Full-width black line under the header (touches page borders) */
+.header-divider-line {
+  height: 1.5px;
+  background-color: #000;
+  margin-top: 0.7em;
+  margin-bottom: 1.7em;
+  margin-left: -13mm;
+  margin-right: -13mm;
+}
+
+/* Section Headings - red line runs from end of title text to right margin.
+   The gap BEFORE a section is the unit wrapper's margin-top (below), so the
+   measured content height (rect.height) stays independent of page position. */
+.resume-section-header {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+  margin-bottom: 0.4em;
+  position: relative;
+}
+
+.resume-section-title {
+  font-size: 1.17em; /* 14pt at default */
+  font-weight: bold;
+  color: var(--resume-text);
+  margin: 0;
+  text-transform: none;
+  flex-shrink: 0;
+  letter-spacing: 0;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.resume-section-line {
+  flex-grow: 1;
+  height: 1.5pt;
+  min-width: 4mm;
+  background-color: var(--resume-red);
+}
+
+/* Education Table - white header, black borders, centered cells */
+.resume-education-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.8em;
+  margin-bottom: 0.2em;
+}
+.resume-education-table th,
+.resume-education-table td {
+  border: 1px solid var(--resume-grey-border);
+  padding: 0.4em 0.5em;
+  font-size: 0.92em; /* 11pt at default */
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
+  color: var(--resume-text);
+}
+.resume-education-table td {
+  height: 36.5pt;
+}
+.resume-education-table th {
+  font-weight: bold;
+  background-color: #ffffff;
+  height: 37pt;
+}
+
+/* Footnote under the education table (Arial, like the target's legend) */
+.resume-education-note {
+  font-family: 'Arial', 'Liberation Sans', Helvetica, sans-serif;
+  font-size: 0.83em; /* ~10pt at default */
+  margin: 0.1em 0 0.5em;
+  color: #000;
+}
+
+/* Items lists (Projects, Areas of Interest, etc.) */
+.resume-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+/* Text indents ~36pt (matches target). The bullet hangs absolutely-positioned
+   ~18pt to the left so it sits on the same line as the first text line. */
+.resume-item {
+  padding-left: 3em;
+  position: relative;
+}
+.resume-item::before {
+  content: "•";
+  position: absolute;
+  left: 1.5em;
+  top: 0;
+  font-size: 1em;
+}
+.resume-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.resume-item-title {
+  font-weight: bold;
+  font-size: 1em;
+  color: var(--resume-text);
+}
+.resume-item-date {
+  font-style: italic;
+  font-size: 0.92em;
+  font-weight: normal;
+  white-space: nowrap;
+  color: var(--resume-text);
+}
+.resume-item-desc {
+  font-size: 0.92em;
+  line-height: 1.2;
+  color: #000;
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  text-align: justify; /* all lines end at the same right edge */
+}
+
+/* Bullet points under a project/internship/position item.
+   The parent item pads 3em, so the child box starts at the description indent.
+   Keep the text there and hang the dot 1.5em to the LEFT, so sub-bullets align
+   exactly with the item's own bullet and description. */
+.resume-item-bullets {
+  margin-top: 0.2em;
+}
+.resume-item-bullets .resume-item {
+  padding-left: 0;
+  margin-bottom: 0.05em;
+}
+.resume-item-bullets .resume-item::before {
+  left: -1.5em;
+}
+
+/* Subheadings for Extracurriculars - bold, not italic/underlined (matches target) */
+.resume-subheading {
+  font-weight: bold;
+  font-style: normal;
+  font-size: 0.92em;
+  margin-top: 0.6em;
+  margin-bottom: 0.25em;
+  padding-left: 1.5em; /* ~18pt, matches target subheading indent */
+  text-decoration: none;
+}
+
+.resume-skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+.resume-skill-item {
+  font-size: 0.92em;
+  line-height: 1.3;
+  padding-left: 3em;
+  position: relative;
+}
+.resume-skill-item::before {
+  content: "•";
+  position: absolute;
+  left: 1.5em;
+  top: 0;
+  font-size: 1em;
+}
+.resume-skill-label {
+  font-weight: bold;
+}
+
+/* Footer - Cambria gray text with split blue segments (matches target) */
+.resume-footer {
+  position: absolute;
+  bottom: 4mm;
+  left: 13mm;
+  right: 13mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2mm;
+  font-family: 'Cambria', Georgia, 'Times New Roman', serif;
+  font-size: 0.83em; /* 9.96pt at default */
+  color: #808080;
+  text-align: center;
+}
+.resume-footer-text {
+  line-height: 1.3;
+}
+.resume-footer-blue-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 10mm;
+  width: calc(100% - 20mm);
+}
+.resume-footer-blue {
+  width: 25mm;
+  height: 0.5pt;
+  background-color: var(--resume-blue);
+}
+
+/* Hidden measurement container used to size content for dynamic pagination.
+   Mirrors .resume-page so measured heights match the rendered pages exactly. */
+.resume-measure {
+  position: absolute;
+  top: 0;
+  left: -9999px;
+  visibility: hidden;
+  pointer-events: none;
+}
+.measure-page {
+  width: 210mm;
+  height: 297mm;
+  padding: 14mm 13mm 30mm 13mm;
+  box-sizing: border-box;
+}
+.measure-content {
+  height: 100%;
+  font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+  line-height: 1.2;
+}
+.measure-unit {
+  width: 100%;
+  overflow: hidden; /* contain child margins so rect.height is exact */
+}
+
+/* Each rendered unit on a real page. Flex column prevents sibling margins from
+   collapsing so the visual gaps equal each unit's margin-top (what pagination
+   models). */
+.page-body {
+  display: flex;
+  flex-direction: column;
+}
+.page-unit {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Spacing between units: the unit's own top margin. First-on-page drops it. */
+.page-unit.unit-sechead,
+.measure-unit.unit-sechead,
+.page-unit.unit-block,
+.measure-unit.unit-block {
+  margin-top: 1.5em;
+}
+.page-unit.unit-item,
+.measure-unit.unit-item,
+.page-unit.unit-subblock,
+.measure-unit.unit-subblock {
+  margin-top: 0.8em;
+}
+.page-unit.first-on-page {
+  margin-top: 0 !important;
+}
+
+/* PRINT MEDIA STYLES - Pixel perfect PDF generation */
+@media print {
+  body {
+    background-color: #fff !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  .editor-sidebar {
+    display: none !important;
+  }
+
+  .resume-measure {
+    display: none !important;
+  }
+
+  .preview-area {
+    padding: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+    height: auto !important;
+    display: block !important;
+  }
+  
+  .resume-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 14mm 13mm 30mm 13mm !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Remove default browser margins and headers/footers */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}

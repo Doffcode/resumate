@@ -1,0 +1,428 @@
+/* App.css - Resume Builder styling system */
+
+/* Lato = resume body/headings, Cambria = footer, Arial = education legend */
+@font-face {
+  font-family: 'Lato';
+  src: url('../assets/fonts/lato-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('../assets/fonts/lato-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('../assets/fonts/lato-italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Cambria';
+  src: url('../assets/fonts/cambria-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Arial';
+  src: url('../assets/fonts/arial-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Resume palette — the only colours the sealed renderer knows about. */
+:root {
+  --resume-bg: #ffffff;
+  --resume-text: #000000;
+  --resume-red: #c00000;
+  --resume-blue: #4f81bd;
+  --resume-grey-border: #000000;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* RESUME SHEET LAYOUT */
+/* Replicates exact A4 margins and styles from the target PDF */
+.resume-page {
+  width: 210mm;
+  height: 297mm;
+  background-color: var(--resume-bg);
+  color: var(--resume-text);
+  padding: 14mm 13mm 30mm 13mm;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  position: relative;
+  box-sizing: border-box;
+  margin-bottom: 30px;
+  flex-shrink: 0;
+  overflow: hidden;
+  font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+  line-height: 1.2;
+}
+
+/* Resume typography & elements (matches target PDF header) */
+.resume-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 0.4em;
+  position: relative;
+}
+
+.resume-logo-container {
+  width: 37mm;
+  height: 36mm;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.resume-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.resume-info {
+  flex-grow: 1;
+  padding-left: 0.6em;
+  padding-right: 1em;
+}
+.resume-name {
+  font-size: 1.5em; /* 18pt at default */
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 1.15;
+  margin-bottom: 0.15em;
+}
+.resume-subname {
+  font-size: 0.92em; /* 11pt */
+  font-weight: normal;
+  line-height: 1.3;
+  margin-bottom: 0.55em;
+}
+.resume-details {
+  font-size: 0.92em; /* 11pt */
+  line-height: 1.4;
+}
+.resume-detail-line {
+  white-space: nowrap;
+}
+.resume-detail-label {
+  font-weight: normal;
+}
+
+.resume-photo-container {
+  /* Guide TIPS: official box is 1.23in wide x 1.35in tall. */
+  width: 31.24mm;
+  height: 34.29mm;
+  flex-shrink: 0;
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #fff;
+}
+.resume-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Full-width black line under the header (touches page borders) */
+.header-divider-line {
+  height: 1.5px;
+  background-color: #000;
+  margin-top: 0.7em;
+  margin-bottom: 1.7em;
+  margin-left: -13mm;
+  margin-right: -13mm;
+}
+
+/* Section Headings - red line runs from end of title text to right margin.
+   The gap BEFORE a section is the unit wrapper's margin-top (below), so the
+   measured content height (rect.height) stays independent of page position. */
+.resume-section-header {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+  margin-bottom: 0.4em;
+  position: relative;
+}
+
+.resume-section-title {
+  font-size: 1.17em; /* 14pt at default */
+  font-weight: bold;
+  color: var(--resume-text);
+  margin: 0;
+  text-transform: none;
+  flex-shrink: 0;
+  letter-spacing: 0;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.resume-section-line {
+  flex-grow: 1;
+  height: 1.5pt;
+  min-width: 4mm;
+  background-color: var(--resume-red);
+}
+
+/* Education Table - white header, black borders, centered cells */
+.resume-education-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.8em;
+  margin-bottom: 0.2em;
+}
+.resume-education-table th,
+.resume-education-table td {
+  border: 1px solid var(--resume-grey-border);
+  padding: 0.4em 0.5em;
+  font-size: 0.92em; /* 11pt at default */
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
+  color: var(--resume-text);
+}
+.resume-education-table td {
+  height: 36.5pt;
+}
+.resume-education-table th {
+  font-weight: bold;
+  background-color: #ffffff;
+  height: 37pt;
+}
+
+/* Footnote under the education table (Arial, like the target's legend) */
+.resume-education-note {
+  font-family: 'Arial', 'Liberation Sans', Helvetica, sans-serif;
+  font-size: 0.83em; /* ~10pt at default */
+  margin: 0.1em 0 0.5em;
+  color: #000;
+}
+
+/* Items lists (Projects, Areas of Interest, etc.) */
+.resume-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+/* Text indents ~36pt (matches target). The bullet hangs absolutely-positioned
+   ~18pt to the left so it sits on the same line as the first text line. */
+.resume-item {
+  padding-left: 3em;
+  position: relative;
+}
+.resume-item::before {
+  content: "•";
+  position: absolute;
+  left: 1.5em;
+  top: 0;
+  font-size: 1em;
+}
+.resume-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.resume-item-title {
+  font-weight: bold;
+  font-size: 1em;
+  color: var(--resume-text);
+}
+.resume-item-date {
+  font-style: italic;
+  font-size: 0.92em;
+  font-weight: normal;
+  white-space: nowrap;
+  color: var(--resume-text);
+}
+.resume-item-desc {
+  font-size: 0.92em;
+  line-height: 1.2;
+  color: #000;
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  text-align: justify; /* all lines end at the same right edge */
+}
+
+/* Bullet points under a project/internship/position item.
+   The parent item pads 3em, so the child box starts at the description indent.
+   Keep the text there and hang the dot 1.5em to the LEFT, so sub-bullets align
+   exactly with the item's own bullet and description. */
+.resume-item-bullets {
+  margin-top: 0.2em;
+}
+.resume-item-bullets .resume-item {
+  padding-left: 0;
+  margin-bottom: 0.05em;
+}
+.resume-item-bullets .resume-item::before {
+  left: -1.5em;
+}
+
+/* Subheadings for Extracurriculars - bold, not italic/underlined (matches target) */
+.resume-subheading {
+  font-weight: bold;
+  font-style: normal;
+  font-size: 0.92em;
+  margin-top: 0.6em;
+  margin-bottom: 0.25em;
+  padding-left: 1.5em; /* ~18pt, matches target subheading indent */
+  text-decoration: none;
+}
+
+.resume-skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+.resume-skill-item {
+  font-size: 0.92em;
+  line-height: 1.3;
+  padding-left: 3em;
+  position: relative;
+}
+.resume-skill-item::before {
+  content: "•";
+  position: absolute;
+  left: 1.5em;
+  top: 0;
+  font-size: 1em;
+}
+.resume-skill-label {
+  font-weight: bold;
+}
+
+/* Footer - Cambria gray text with split blue segments (matches target) */
+.resume-footer {
+  position: absolute;
+  bottom: 4mm;
+  left: 13mm;
+  right: 13mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2mm;
+  font-family: 'Cambria', Georgia, 'Times New Roman', serif;
+  font-size: 0.83em; /* 9.96pt at default */
+  color: #808080;
+  text-align: center;
+}
+.resume-footer-text {
+  line-height: 1.3;
+}
+.resume-footer-blue-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 10mm;
+  width: calc(100% - 20mm);
+}
+.resume-footer-blue {
+  width: 25mm;
+  height: 0.5pt;
+  background-color: var(--resume-blue);
+}
+
+/* Hidden measurement container used to size content for dynamic pagination.
+   Mirrors .resume-page so measured heights match the rendered pages exactly. */
+.resume-measure {
+  position: absolute;
+  top: 0;
+  left: -9999px;
+  visibility: hidden;
+  pointer-events: none;
+}
+.measure-page {
+  width: 210mm;
+  height: 297mm;
+  padding: 14mm 13mm 30mm 13mm;
+  box-sizing: border-box;
+}
+.measure-content {
+  height: 100%;
+  font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+  line-height: 1.2;
+}
+.measure-unit {
+  width: 100%;
+  overflow: hidden; /* contain child margins so rect.height is exact */
+}
+
+/* Each rendered unit on a real page. Flex column prevents sibling margins from
+   collapsing so the visual gaps equal each unit's margin-top (what pagination
+   models). */
+.page-body {
+  display: flex;
+  flex-direction: column;
+}
+.page-unit {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Spacing between units: the unit's own top margin. First-on-page drops it. */
+.page-unit.unit-sechead,
+.measure-unit.unit-sechead,
+.page-unit.unit-block,
+.measure-unit.unit-block {
+  margin-top: 1.5em;
+}
+.page-unit.unit-item,
+.measure-unit.unit-item,
+.page-unit.unit-subblock,
+.measure-unit.unit-subblock {
+  margin-top: 0.8em;
+}
+.page-unit.first-on-page {
+  margin-top: 0 !important;
+}
+
+/* PRINT MEDIA STYLES - Pixel perfect PDF generation */
+@media print {
+  body {
+    background-color: #fff !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  .editor-sidebar {
+    display: none !important;
+  }
+
+  .resume-measure {
+    display: none !important;
+  }
+
+  .preview-area {
+    padding: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+    height: auto !important;
+    display: block !important;
+  }
+  
+  .resume-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 14mm 13mm 30mm 13mm !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Remove default browser margins and headers/footers */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}
