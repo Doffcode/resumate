@@ -101,6 +101,8 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
             <button className="rm-link" onClick={() => onNavigate('privacy')}>Privacy</button>
             <span className="rm-dot-sep">·</span>
             <button className="rm-link" onClick={() => onNavigate('terms')}>Terms</button>
+            <span className="rm-dot-sep">·</span>
+            <button className="rm-link" onClick={() => onNavigate('admin')}>Admin</button>
           </footer>
         </div>
       </div>

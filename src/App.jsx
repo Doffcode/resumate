@@ -8,6 +8,7 @@ import PrintPage from './pages/PrintPage.jsx';
 import Settings from './pages/Settings.jsx';
 import Privacy from './pages/Privacy.jsx';
 import Terms from './pages/Terms.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
 import './editor/editor.css';
 
 // Two auth-independent routes, both served by the chrome-free PrintPage:
@@ -63,6 +64,9 @@ export default function App() {
   }
   if (view === 'terms') {
     return <Terms onBack={toDashboard} />;
+  }
+  if (view === 'admin') {
+    return <AdminDashboard onBack={toDashboard} />;
   }
 
   return (

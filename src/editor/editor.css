@@ -409,3 +409,25 @@ body {
   .rm-dash-inner { padding: 24px 16px 60px; }
   .rm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
 }
+
+/* ---------- admin dashboard ---------- */
+.rm-admin-counters { display: flex; gap: 14px; margin-top: 18px; }
+.rm-admin-counter {
+  flex: 1; border: 1px solid var(--rm-border); border-radius: var(--rm-r);
+  background: var(--rm-surface); padding: 14px 16px;
+}
+.rm-admin-num { font-size: 26px; font-weight: 680; letter-spacing: -.02em; }
+
+.rm-chart { display: flex; align-items: flex-end; gap: 3px; height: 52px; border-bottom: 1px solid var(--rm-border); padding-bottom: 2px; }
+.rm-chart-col { display: flex; align-items: flex-end; gap: 1px; flex: 1; }
+.rm-bar { flex: 1; background: var(--rm-accent); border-radius: 1px; min-height: 2px; opacity: .8; }
+.rm-chart-col .rm-bar:last-child { background: var(--rm-green); }
+
+.rm-admin-userlist { border: 1px solid var(--rm-border); border-radius: var(--rm-r); overflow: hidden; }
+.rm-admin-user-row {
+  display: flex; justify-content: space-between; align-items: center; width: 100%;
+  padding: 10px 14px; border-bottom: 1px solid var(--rm-border); font-size: 13px;
+  background: var(--rm-surface); transition: background .12s;
+}
+.rm-admin-user-row:last-child { border-bottom: none; }
+.rm-admin-user-row:hover { background: var(--rm-surface-2); }
