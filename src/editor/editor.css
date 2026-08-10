@@ -316,7 +316,10 @@ body {
 
 /* ---------- dashboard ---------- */
 .rm-dash { height: 100vh; display: flex; flex-direction: column; background: var(--rm-bg); }
-.rm-dash-email { font-size: 12.5px; color: var(--rm-text-3); margin-right: 4px; }
+.rm-dash-email {
+  font-size: 12.5px; color: var(--rm-text-3); margin-right: 4px;
+  min-width: 0; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .rm-dash-body { flex: 1; overflow-y: auto; }
 .rm-dash-inner { max-width: 940px; margin: 0 auto; padding: 44px 24px 80px; }
 .rm-dash-inner h1 { font-size: 26px; font-weight: 680; letter-spacing: -.02em; margin-bottom: 5px; }
@@ -364,3 +367,45 @@ body {
 .rm-link { font-size: 12.5px; color: var(--rm-text-3); text-decoration: underline; text-underline-offset: 2px; }
 .rm-link:hover { color: var(--rm-text-2); }
 .rm-dot-sep { color: var(--rm-border-strong); font-size: 12px; }
+
+/* ---------- mobile (<=768px) ---------- */
+.rm-drawer-toggle { display: none; }
+.rm-drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(16,17,26,.4); z-index: 29;
+}
+
+@media (max-width: 768px) {
+  .rm-drawer-toggle { display: grid; }
+
+  .rm-workspace { position: relative; overflow: hidden; }
+
+  /* The 400px fixed sidebar becomes a slide-in overlay instead of squeezing
+     the preview into an unusable sliver. */
+  .rm-editor {
+    position: fixed; top: 52px; left: 0; bottom: 0; z-index: 30;
+    width: 85vw; max-width: 340px;
+    transform: translateX(-100%);
+    transition: transform .2s ease-out;
+  }
+  .rm-editor.is-open { transform: translateX(0); }
+
+  /* The A4 page keeps its real size and scrolls horizontally rather than
+     being shrunk to fit — per spec, reflowing a fixed-mm page distorts it. */
+  .rm-canvas { padding: 16px 0 40px; }
+  .rm-preview-bar { flex-wrap: wrap; height: auto; padding: 8px 10px; gap: 8px; }
+  .rm-pagelabel { display: none; }
+
+  .rm-topbar { padding: 0 8px; gap: 4px; overflow-x: auto; }
+  .rm-topbar .rm-saved { display: none; }
+  .rm-topbar .rm-btn { padding: 0 8px; font-size: 12px; gap: 4px; flex-shrink: 0; }
+  .rm-topbar .rm-brand { font-size: 13px; flex-shrink: 0; }
+
+  /* Format Check / AI panel: 380px fixed side panel becomes a full-screen
+     overlay instead of squeezing (or clipping) the preview to nothing. It's
+     already conditionally mounted by panel state, so no JS/class toggle
+     needed here — the same mount/unmount that drives it on desktop. */
+  .rm-drawer { position: fixed; top: 52px; left: 0; right: 0; bottom: 0; z-index: 25; width: auto; }
+
+  .rm-dash-inner { padding: 24px 16px 60px; }
+  .rm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+}

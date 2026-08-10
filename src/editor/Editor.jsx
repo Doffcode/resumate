@@ -6,7 +6,7 @@ import { Icon, icons, Switch, Field, IconBtn, Breaker, AddButton, ItemControls }
 
 const ITEM_SECTIONS = ['internships', 'projects', 'positions'];
 
-export default function Editor({ rd }) {
+export default function Editor({ rd, mobileOpen }) {
   const { data } = rd;
   const [open, setOpen] = useState({ personalInfo: true, projects: true });
   const toggleOpen = (id) => setOpen((o) => ({ ...o, [id]: !o[id] }));
@@ -19,7 +19,7 @@ export default function Editor({ rd }) {
   };
 
   return (
-    <aside className="rm-editor">
+    <aside className={`rm-editor${mobileOpen ? ' is-open' : ''}`}>
       <div className="rm-editor-head">
         <h2>Sections</h2>
         <button className="rm-btn rm-btn-ghost" style={{ height: 26, padding: '0 8px', fontSize: 12.5 }} onClick={rd.reset}>

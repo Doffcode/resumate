@@ -19,6 +19,7 @@ export const icons = {
   back: ['M19 12H5', 'M12 19l-7-7 7-7'],
   doc: ['M14 3v5h5', 'M6 3h8l5 5v13H6z'],
   edit: ['M4 20h4L18.5 9.5a2.1 2.1 0 00-3-3L5 17v3z'],
+  menu: ['M4 6h16', 'M4 12h16', 'M4 18h16'],
 };
 
 export function Switch({ checked, onChange, label }) {

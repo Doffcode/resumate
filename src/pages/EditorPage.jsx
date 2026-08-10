@@ -31,6 +31,7 @@ export default function EditorPage({ resumeId, onBack }) {
   const [panel, setPanel] = useState('check'); // 'check' | 'ai' | null
   const [exporting, setExporting] = useState(false);
   const [exportNotice, setExportNotice] = useState(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const handleExport = async () => {
     setExporting(true);
@@ -71,6 +72,13 @@ export default function EditorPage({ resumeId, onBack }) {
             <Icon d={icons.back} size={16} />
           </button>
         )}
+        <button
+          className="rm-iconbtn rm-drawer-toggle"
+          onClick={() => setMobileSidebarOpen((o) => !o)}
+          title="Toggle sections"
+        >
+          <Icon d={icons.menu} size={16} />
+        </button>
         <div className="rm-brand"><span className="rm-mark">R</span>Resumate</div>
         <div className="rm-sep" />
         <div className="rm-saved">
@@ -107,7 +115,10 @@ export default function EditorPage({ resumeId, onBack }) {
       )}
 
       <div className="rm-workspace">
-        <Editor rd={rd} />
+        <Editor rd={rd} mobileOpen={mobileSidebarOpen} />
+        {mobileSidebarOpen && (
+          <div className="rm-drawer-backdrop" onClick={() => setMobileSidebarOpen(false)} />
+        )}
 
         <section className="rm-preview">
           <div className="rm-preview-bar">
