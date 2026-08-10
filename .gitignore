@@ -8,3 +8,5 @@ supabase/.temp
 *.swo
 .*.swp
 .*.swo
+.vercel
+.env*

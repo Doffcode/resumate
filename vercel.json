@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/export-pdf.js": {
+      "memory": 1536,
+      "maxDuration": 30
+    }
+  }
+}
