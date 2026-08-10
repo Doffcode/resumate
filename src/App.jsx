@@ -5,6 +5,9 @@ import AuthScreen from './auth/AuthScreen.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import EditorPage from './pages/EditorPage.jsx';
 import PrintPage from './pages/PrintPage.jsx';
+import Settings from './pages/Settings.jsx';
+import Privacy from './pages/Privacy.jsx';
+import Terms from './pages/Terms.jsx';
 import './editor/editor.css';
 
 // Two auth-independent routes, both served by the chrome-free PrintPage:
@@ -26,6 +29,7 @@ const isPrintRoute = () => {
 export default function App() {
   const auth = useAuth();
   const [openResumeId, setOpenResumeId] = useState(null);
+  const [view, setView] = useState('dashboard'); // 'dashboard' | 'settings' | 'privacy' | 'terms' | 'admin'
 
   if (isPrintRoute()) {
     return <PrintPage />;
@@ -49,11 +53,24 @@ export default function App() {
     return <EditorPage resumeId={openResumeId} onBack={() => setOpenResumeId(null)} />;
   }
 
+  const toDashboard = () => setView('dashboard');
+
+  if (view === 'settings') {
+    return <Settings user={auth.user} onBack={toDashboard} onSignOut={auth.signOut} />;
+  }
+  if (view === 'privacy') {
+    return <Privacy onBack={toDashboard} />;
+  }
+  if (view === 'terms') {
+    return <Terms onBack={toDashboard} />;
+  }
+
   return (
     <Dashboard
       user={auth.user}
       onOpen={setOpenResumeId}
       onSignOut={auth.signOut}
+      onNavigate={setView}
     />
   );
 }

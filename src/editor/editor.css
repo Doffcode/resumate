@@ -344,3 +344,23 @@ body {
 .rm-card-new:disabled { opacity: .6; cursor: not-allowed; }
 
 .rm-page-loading { flex: 1; display: grid; place-items: center; color: var(--rm-text-2); font-size: 14px; gap: 12px; height: 100vh; flex-direction: column; }
+
+/* ---------- settings / legal / danger zone ---------- */
+.rm-btn-danger { background: #fef2f2; color: var(--rm-red); border: 1px solid #fecaca; }
+.rm-btn-danger:hover:not(:disabled) { background: #fee2e2; }
+.rm-danger-zone {
+  border: 1px solid #fecaca; border-radius: var(--rm-r); background: #fffbfb;
+  padding: 16px; margin-top: 18px;
+}
+.rm-danger-zone h2 { font-size: 14px; font-weight: 650; color: var(--rm-red); margin-bottom: 6px; }
+.rm-danger-zone p { font-size: 13px; color: var(--rm-text-2); line-height: 1.5; margin-bottom: 12px; }
+.rm-danger-confirm p { font-size: 13px; color: var(--rm-text); margin-bottom: 10px; }
+
+.rm-legal h1 { font-size: 22px; font-weight: 680; margin-bottom: 6px; }
+.rm-legal h2 { font-size: 14px; font-weight: 650; margin-top: 20px; margin-bottom: 6px; }
+.rm-legal p { font-size: 13.5px; color: var(--rm-text-2); line-height: 1.6; }
+
+.rm-dash-footer { display: flex; align-items: center; gap: 8px; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rm-border); }
+.rm-link { font-size: 12.5px; color: var(--rm-text-3); text-decoration: underline; text-underline-offset: 2px; }
+.rm-link:hover { color: var(--rm-text-2); }
+.rm-dot-sep { color: var(--rm-border-strong); font-size: 12px; }

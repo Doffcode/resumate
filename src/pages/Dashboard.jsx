@@ -10,7 +10,7 @@ const timeAgo = (iso) => {
   return `${Math.floor(s / 86400)} day${Math.floor(s / 86400) === 1 ? '' : 's'} ago`;
 };
 
-export default function Dashboard({ user, onOpen, onSignOut }) {
+export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
   const { resumes, loading, error, create, rename, remove } = useResumeList(user.id);
   const [creating, setCreating] = useState(false);
   const [renamingId, setRenamingId] = useState(null);
@@ -94,6 +94,14 @@ export default function Dashboard({ user, onOpen, onSignOut }) {
               </button>
             </div>
           )}
+
+          <footer className="rm-dash-footer">
+            <button className="rm-link" onClick={() => onNavigate('settings')}>Account settings</button>
+            <span className="rm-dot-sep">·</span>
+            <button className="rm-link" onClick={() => onNavigate('privacy')}>Privacy</button>
+            <span className="rm-dot-sep">·</span>
+            <button className="rm-link" onClick={() => onNavigate('terms')}>Terms</button>
+          </footer>
         </div>
       </div>
     </div>
