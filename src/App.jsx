@@ -6,6 +6,7 @@ import { ResumePages, MeasureArea } from './resume/Resume.jsx';
 import Editor from './editor/Editor.jsx';
 import { Icon, icons } from './editor/controls.jsx';
 import FormatCheck, { useFormatCheck } from './editor/FormatCheck.jsx';
+import AiPanel from './ai/AiPanel.jsx';
 import './editor/editor.css';
 
 // Repaginating on every keystroke is wasteful; the preview settles 400ms after
@@ -27,7 +28,7 @@ export default function App() {
   const preview = useDebounced(rd.data, 400);
   const { pages, units, fill, baseFontSize, contentRef, headerRef, unitRefs } = useMeasure(preview, allSections);
   const [zoom, setZoom] = useState(100);
-  const [checkOpen, setCheckOpen] = useState(true);
+  const [panel, setPanel] = useState('check'); // 'check' | 'ai' | null
   // Checks run against live data, not the debounced copy, so a fix reads as instant.
   const check = useFormatCheck(rd.data, fill);
 
@@ -46,11 +47,18 @@ export default function App() {
         <div className="rm-spacer" />
         <button
           className={`rm-btn rm-btn-ghost${check.failCount ? ' rm-has-issues' : ''}`}
-          onClick={() => setCheckOpen((o) => !o)}
+          onClick={() => setPanel((p) => (p === 'check' ? null : 'check'))}
         >
           <Icon d={icons.check} />
           Format Check
           {check.failCount > 0 && <span className="rm-pip">{check.failCount}</span>}
+        </button>
+        <button
+          className={`rm-btn rm-btn-ghost${panel === 'ai' ? ' rm-has-issues' : ''}`}
+          onClick={() => setPanel((p) => (p === 'ai' ? null : 'ai'))}
+        >
+          <Icon d={icons.spark} />
+          AI Assistant
         </button>
         <button className="rm-btn rm-btn-secondary" onClick={() => window.print()}>
           <Icon d={icons.download} />
@@ -101,7 +109,8 @@ export default function App() {
           </div>
         </section>
 
-        <FormatCheck result={check} rd={rd} open={checkOpen} onClose={() => setCheckOpen(false)} />
+        <FormatCheck result={check} rd={rd} open={panel === 'check'} onClose={() => setPanel(null)} />
+        <AiPanel rd={rd} resumeId={null} open={panel === 'ai'} onClose={() => setPanel(null)} />
       </div>
     </div>
   );

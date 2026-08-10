@@ -117,6 +117,40 @@ export function useResumeData() {
     toggleItemBreak: (secId, id) =>
       update((d) => { const it = d[secId].find((x) => x.id === id); if (it) it.pageBreak = !it.pageBreak; return d; }),
 
+    // Used by the AI panel's "Keep both" / "Add as project". Respects the cap
+    // and silently no-ops rather than throwing if it is already reached — the
+    // UI disables the button, this is the second line of defence.
+    addProject: (p) =>
+      update((d) => {
+        if (d.projects.length >= LIMITS.projects) return d;
+        d.projects.push({
+          id: nextId(d.projects),
+          title: p.title || '',
+          date: p.date || '',
+          description: p.description || '',
+          bullets: [],
+          pageBreak: false,
+        });
+        return d;
+      }),
+
+    // Merges into an existing category when one matches, otherwise adds a row.
+    // Never duplicates a skill that is already listed.
+    addSkills: (category, names) =>
+      update((d) => {
+        const existing = d.skills.find(
+          (s) => s.label?.trim().toLowerCase() === category.trim().toLowerCase()
+        );
+        if (existing) {
+          const have = existing.value.split(',').map((x) => x.trim().toLowerCase());
+          const fresh = names.filter((n) => !have.includes(n.trim().toLowerCase()));
+          if (fresh.length) existing.value = [existing.value, ...fresh].filter(Boolean).join(', ');
+        } else {
+          d.skills.push({ id: nextId(d.skills), label: category, value: names.join(', '), pageBreak: false });
+        }
+        return d;
+      }),
+
     reset: () => setData({ ...clone(defaultResume), schemaVersion: SCHEMA_VERSION }),
   };
 
