@@ -1,0 +1,101 @@
+import { useState } from 'react';
+import { useResumeList } from '../data/useResumeList.js';
+import { Icon, icons } from '../editor/controls.jsx';
+
+const timeAgo = (iso) => {
+  const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return `${Math.floor(s / 60)} min ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)} hr ago`;
+  return `${Math.floor(s / 86400)} day${Math.floor(s / 86400) === 1 ? '' : 's'} ago`;
+};
+
+export default function Dashboard({ user, onOpen, onSignOut }) {
+  const { resumes, loading, error, create, rename, remove } = useResumeList(user.id);
+  const [creating, setCreating] = useState(false);
+  const [renamingId, setRenamingId] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
+
+  const handleCreate = async () => {
+    setCreating(true);
+    try {
+      const id = await create('Untitled Resume');
+      onOpen(id);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const startRename = (r) => { setRenamingId(r.id); setRenameValue(r.title); };
+  const commitRename = async (id) => {
+    const title = renameValue.trim() || 'Untitled Resume';
+    setRenamingId(null);
+    await rename(id, title);
+  };
+
+  return (
+    <div className="rm-dash">
+      <header className="rm-topbar">
+        <div className="rm-brand"><span className="rm-mark">R</span>Resumate</div>
+        <div className="rm-spacer" />
+        <span className="rm-dash-email">{user.email}</span>
+        <button className="rm-btn rm-btn-ghost" onClick={onSignOut}>Sign out</button>
+      </header>
+
+      <div className="rm-dash-body">
+        <div className="rm-dash-inner">
+          <h1>Your resumes</h1>
+          <p className="rm-dash-sub">Each resume keeps its own content, sections and page breaks.</p>
+
+          {error && <div className="rm-notice is-error">{error}</div>}
+
+          {loading ? (
+            <p className="rm-hint">Loading…</p>
+          ) : (
+            <div className="rm-grid">
+              {resumes.map((r) => (
+                <div className="rm-card" key={r.id}>
+                  <button className="rm-card-open" onClick={() => onOpen(r.id)}>
+                    <div className="rm-card-thumb"><Icon d={icons.doc} size={34} /></div>
+                  </button>
+                  <div className="rm-card-info">
+                    {renamingId === r.id ? (
+                      <input
+                        className="rm-input"
+                        autoFocus
+                        value={renameValue}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onBlur={() => commitRename(r.id)}
+                        onKeyDown={(e) => e.key === 'Enter' && commitRename(r.id)}
+                      />
+                    ) : (
+                      <div className="rm-card-name" onClick={() => onOpen(r.id)}>{r.title}</div>
+                    )}
+                    <div className="rm-card-date">Edited {timeAgo(r.updated_at)}</div>
+                  </div>
+                  <div className="rm-card-actions">
+                    <button className="rm-iconbtn" title="Rename" onClick={() => startRename(r)}>
+                      <Icon d={icons.edit} size={13} />
+                    </button>
+                    <button
+                      className="rm-iconbtn is-danger"
+                      title="Delete"
+                      onClick={() => window.confirm(`Delete "${r.title}"? This cannot be undone.`) && remove(r.id)}
+                    >
+                      <Icon d={icons.trash} size={13} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              <button className="rm-card rm-card-new" onClick={handleCreate} disabled={creating}>
+                <Icon d={icons.plus} size={22} />
+                {creating ? 'Creating…' : 'New resume'}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

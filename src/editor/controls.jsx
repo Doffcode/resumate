@@ -16,6 +16,9 @@ export const icons = {
   spark: ['M12 3l1.9 5.5L19.5 10l-5.6 1.5L12 17l-1.9-5.5L4.5 10l5.6-1.5z'],
   check: ['M9 11l3 3L22 4', 'M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11'],
   close: ['M18 6L6 18M6 6l12 12'],
+  back: ['M19 12H5', 'M12 19l-7-7 7-7'],
+  doc: ['M14 3v5h5', 'M6 3h8l5 5v13H6z'],
+  edit: ['M4 20h4L18.5 9.5a2.1 2.1 0 00-3-3L5 17v3z'],
 };
 
 export function Switch({ checked, onChange, label }) {

@@ -34,7 +34,7 @@ execFileSync(CHROME, [
   `--user-data-dir=${join(work, 'chrome-profile')}`,
   '--virtual-time-budget=10000', '--run-all-compositor-stages-before-draw',
   '--no-pdf-header-footer', `--print-to-pdf=${pdf}`,
-  `http://localhost:${PORT}/`,
+  `http://localhost:${PORT}/?golden=1`, // bypass auth: render the sealed default fixture
 ], { stdio: 'ignore' });
 
 // Clear stale page-N.png first so a page-count drop cannot leave orphans behind.

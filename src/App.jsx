@@ -1,117 +1,51 @@
-import { useState, useEffect } from 'react';
-import { allSections } from './data/defaultResume.js';
-import { useResumeData } from './state/useResumeData.js';
-import { useMeasure } from './pagination/useMeasure.js';
-import { ResumePages, MeasureArea } from './resume/Resume.jsx';
-import Editor from './editor/Editor.jsx';
-import { Icon, icons } from './editor/controls.jsx';
-import FormatCheck, { useFormatCheck } from './editor/FormatCheck.jsx';
-import AiPanel from './ai/AiPanel.jsx';
+import { useState } from 'react';
+import { isConnected } from './lib/supabase.js';
+import { useAuth } from './auth/useAuth.js';
+import AuthScreen from './auth/AuthScreen.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import EditorPage from './pages/EditorPage.jsx';
 import './editor/editor.css';
 
-// Repaginating on every keystroke is wasteful; the preview settles 400ms after
-// typing stops. The editor fields themselves stay fully responsive.
-function useDebounced(value, ms) {
-  const [v, setV] = useState(value);
-  useEffect(() => {
-    const t = setTimeout(() => setV(value), ms);
-    return () => clearTimeout(t);
-  }, [value, ms]);
-  return v;
-}
-
-// Guide rule #12: "first page should not be half blank".
-const UNDERFULL = 70;
+// scripts/golden-check.mjs and golden-check.mjs hit this directly so the
+// pixel-diff tests the sealed renderer against the fixed default fixture,
+// completely independent of auth state or which Supabase project is
+// configured in the build. Without this, adding real accounts would silently
+// make the golden baseline untestable (the root route would show a login
+// screen instead of a resume) — caught by golden:check going from PASS to
+// "page count: candidate 1, golden 2" the moment auth was wired in.
+const isGoldenCheck = () => new URLSearchParams(location.search).has('golden');
 
 export default function App() {
-  const rd = useResumeData();
-  const preview = useDebounced(rd.data, 400);
-  const { pages, units, fill, baseFontSize, contentRef, headerRef, unitRefs } = useMeasure(preview, allSections);
-  const [zoom, setZoom] = useState(100);
-  const [panel, setPanel] = useState('check'); // 'check' | 'ai' | null
-  // Checks run against live data, not the debounced copy, so a fix reads as instant.
-  const check = useFormatCheck(rd.data, fill);
+  const auth = useAuth();
+  const [openResumeId, setOpenResumeId] = useState(null);
 
-  const overflowing = fill.findIndex((f) => f > 100);
-  const underfull = fill.findIndex((f, i) => i < fill.length - 1 && f < UNDERFULL);
+  if (isGoldenCheck()) {
+    return <EditorPage resumeId={null} onBack={null} />;
+  }
+
+  // No Supabase configured at all: skip accounts entirely and fall back to a
+  // single unsynced local resume, same as the original preview-only shell.
+  if (!isConnected()) {
+    return <EditorPage resumeId={null} onBack={null} />;
+  }
+
+  if (auth.loading) {
+    return <div className="rm-app"><div className="rm-page-loading">Loading…</div></div>;
+  }
+
+  if (!auth.user) {
+    return <AuthScreen auth={auth} />;
+  }
+
+  if (openResumeId) {
+    return <EditorPage resumeId={openResumeId} onBack={() => setOpenResumeId(null)} />;
+  }
 
   return (
-    <div className="rm-app">
-      <header className="rm-topbar">
-        <div className="rm-brand"><span className="rm-mark">R</span>Resumate</div>
-        <div className="rm-sep" />
-        <div className="rm-saved">
-          <span className="rm-dot" />
-          {rd.savedAt ? 'Saved' : 'Saving…'}
-        </div>
-        <div className="rm-spacer" />
-        <button
-          className={`rm-btn rm-btn-ghost${check.failCount ? ' rm-has-issues' : ''}`}
-          onClick={() => setPanel((p) => (p === 'check' ? null : 'check'))}
-        >
-          <Icon d={icons.check} />
-          Format Check
-          {check.failCount > 0 && <span className="rm-pip">{check.failCount}</span>}
-        </button>
-        <button
-          className={`rm-btn rm-btn-ghost${panel === 'ai' ? ' rm-has-issues' : ''}`}
-          onClick={() => setPanel((p) => (p === 'ai' ? null : 'ai'))}
-        >
-          <Icon d={icons.spark} />
-          AI Assistant
-        </button>
-        <button className="rm-btn rm-btn-secondary" onClick={() => window.print()}>
-          <Icon d={icons.download} />
-          Export PDF
-        </button>
-      </header>
-
-      <div className="rm-workspace">
-        <Editor rd={rd} />
-
-        <section className="rm-preview">
-          <div className="rm-preview-bar">
-            <div className="rm-pill">
-              <button onClick={() => setZoom((z) => Math.max(50, z - 10))} aria-label="Zoom out">−</button>
-              <span className="rm-zoomval">{zoom}%</span>
-              <button onClick={() => setZoom((z) => Math.min(160, z + 10))} aria-label="Zoom in">+</button>
-            </div>
-            <span className="rm-pagelabel">{pages.length} page{pages.length === 1 ? '' : 's'} · A4</span>
-            <div className="rm-spacer" />
-            {overflowing >= 0 && (
-              <div className="rm-warn">
-                <Icon d={icons.warn} size={14} />
-                Page {overflowing + 1} overflows — add a page break
-              </div>
-            )}
-            {overflowing < 0 && underfull >= 0 && (
-              <div className="rm-warn">
-                <Icon d={icons.warn} size={14} />
-                Page {underfull + 1} is only {fill[underfull]}% full — remove a break or add content
-              </div>
-            )}
-          </div>
-
-          <div className="rm-canvas">
-            <MeasureArea
-              units={units}
-              data={preview}
-              baseFontSize={baseFontSize}
-              contentRef={contentRef}
-              headerRef={headerRef}
-              unitRefs={unitRefs}
-            />
-            <div className="rm-pages">
-              <div className="rm-scaler" style={{ transform: `scale(${zoom / 100})` }}>
-                <ResumePages pages={pages} data={preview} baseFontSize={baseFontSize} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <FormatCheck result={check} rd={rd} open={panel === 'check'} onClose={() => setPanel(null)} />
-        <AiPanel rd={rd} resumeId={null} open={panel === 'ai'} onClose={() => setPanel(null)} />
-      </div>
-    </div>
+    <Dashboard
+      user={auth.user}
+      onOpen={setOpenResumeId}
+      onSignOut={auth.signOut}
+    />
   );
 }

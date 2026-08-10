@@ -1,18 +1,22 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { defaultResume, SCHEMA_VERSION } from '../data/defaultResume.js';
+import { supabase, isConnected, toRow, fromRow } from '../lib/supabase.js';
 
-const STORAGE_KEY = 'resumate.resume.v1';
+const GUEST_STORAGE_KEY = 'resumate.resume.guest';
 
 // Caps live here, not scattered through the UI.
 export const LIMITS = { projects: 6, internships: 4, positions: 4, education: 8 };
 
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const nextId = (list) => (list.length ? Math.max(...list.map((i) => i.id)) + 1 : 1);
+const blank = () => ({ ...clone(defaultResume), schemaVersion: SCHEMA_VERSION });
 
-// Brings a stored resume up to the current shape WITHOUT overwriting user edits:
-// only fills in keys the saved copy is missing. Future versions add cases here.
+// Brings a resume up to the current shape WITHOUT overwriting user edits: only
+// fills in keys the saved copy is missing. Future schema versions add cases
+// here — this is what stops a default-data change from silently clobbering a
+// student's saved resume.
 function migrate(saved) {
-  const data = { ...clone(defaultResume), ...saved };
+  const data = { ...blank(), ...saved };
   for (const key of ['personalInfo', 'layoutSettings', 'pageBreaks', 'sectionVisibility', 'footer']) {
     data[key] = { ...defaultResume[key], ...(saved[key] || {}) };
   }
@@ -23,28 +27,64 @@ function migrate(saved) {
   return data;
 }
 
-function load() {
+function loadGuest() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...clone(defaultResume), schemaVersion: SCHEMA_VERSION };
-    return migrate(JSON.parse(raw));
+    const raw = localStorage.getItem(GUEST_STORAGE_KEY);
+    return raw ? migrate(JSON.parse(raw)) : blank();
   } catch {
-    return { ...clone(defaultResume), schemaVersion: SCHEMA_VERSION };
+    return blank();
   }
 }
 
-export function useResumeData() {
-  const [data, setData] = useState(load);
+// resumeId === null and no connection -> single unsynced resume in
+// localStorage (used for the signed-out / not-configured preview). Otherwise
+// the resume is a row in Supabase, identified by resumeId; mutators are
+// identical in both modes.
+export function useResumeData(resumeId) {
+  const guestMode = !resumeId || !isConnected();
+  const [data, setData] = useState(guestMode ? loadGuest : blank);
   const [savedAt, setSavedAt] = useState(null);
+  const [loading, setLoading] = useState(!guestMode);
+  const [loadError, setLoadError] = useState(null);
+  const loadedId = useRef(null);
 
-  // Autosave. Supabase replaces this body later; the call sites do not change.
+  // Load the row when resumeId changes. Guards against a slow fetch for resume
+  // A resolving after the user has already navigated to resume B.
   useEffect(() => {
-    const t = setTimeout(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      setSavedAt(Date.now());
+    if (guestMode) { setData(loadGuest()); setLoading(false); loadedId.current = null; return; }
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+    supabase.from('resumes').select('*').eq('id', resumeId).single().then(({ data: row, error }) => {
+      if (cancelled) return;
+      if (error) { setLoadError(error.message); setLoading(false); return; }
+      setData(migrate({ ...fromRow(row), title: row.title }));
+      loadedId.current = resumeId;
+      setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [resumeId, guestMode]);
+
+  // Autosave on a debounce. Guarded so a fetch that resolves after the id
+  // changed again, or the initial load itself, can never write stale content
+  // back over a different (or not-yet-loaded) resume.
+  useEffect(() => {
+    if (loading) return;
+    const t = setTimeout(async () => {
+      if (guestMode) {
+        localStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(data));
+        setSavedAt(Date.now());
+        return;
+      }
+      if (loadedId.current !== resumeId) return;
+      const { error } = await supabase
+        .from('resumes')
+        .update({ ...toRow(data), updated_at: new Date().toISOString() })
+        .eq('id', resumeId);
+      if (!error) setSavedAt(Date.now());
     }, 600);
     return () => clearTimeout(t);
-  }, [data]);
+  }, [data, guestMode, resumeId, loading]);
 
   const update = useCallback((fn) => setData((prev) => fn(clone(prev))), []);
 
@@ -151,8 +191,8 @@ export function useResumeData() {
         return d;
       }),
 
-    reset: () => setData({ ...clone(defaultResume), schemaVersion: SCHEMA_VERSION }),
+    reset: () => setData(blank()),
   };
 
-  return { data, savedAt, ...api };
+  return { data, savedAt, loading, loadError, guestMode, ...api };
 }
