@@ -14,6 +14,8 @@ export const icons = {
   download: ['M12 15V3', 'M7 10l5 5 5-5', 'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4'],
   warn: ['M12 9v4M12 17h.01', 'M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z'],
   spark: ['M12 3l1.9 5.5L19.5 10l-5.6 1.5L12 17l-1.9-5.5L4.5 10l5.6-1.5z'],
+  check: ['M9 11l3 3L22 4', 'M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11'],
+  close: ['M18 6L6 18M6 6l12 12'],
 };
 
 export function Switch({ checked, onChange, label }) {

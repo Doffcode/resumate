@@ -5,6 +5,7 @@ import { useMeasure } from './pagination/useMeasure.js';
 import { ResumePages, MeasureArea } from './resume/Resume.jsx';
 import Editor from './editor/Editor.jsx';
 import { Icon, icons } from './editor/controls.jsx';
+import FormatCheck, { useFormatCheck } from './editor/FormatCheck.jsx';
 import './editor/editor.css';
 
 // Repaginating on every keystroke is wasteful; the preview settles 400ms after
@@ -26,6 +27,9 @@ export default function App() {
   const preview = useDebounced(rd.data, 400);
   const { pages, units, fill, baseFontSize, contentRef, headerRef, unitRefs } = useMeasure(preview, allSections);
   const [zoom, setZoom] = useState(100);
+  const [checkOpen, setCheckOpen] = useState(true);
+  // Checks run against live data, not the debounced copy, so a fix reads as instant.
+  const check = useFormatCheck(rd.data, fill);
 
   const overflowing = fill.findIndex((f) => f > 100);
   const underfull = fill.findIndex((f, i) => i < fill.length - 1 && f < UNDERFULL);
@@ -40,6 +44,14 @@ export default function App() {
           {rd.savedAt ? 'Saved' : 'Saving…'}
         </div>
         <div className="rm-spacer" />
+        <button
+          className={`rm-btn rm-btn-ghost${check.failCount ? ' rm-has-issues' : ''}`}
+          onClick={() => setCheckOpen((o) => !o)}
+        >
+          <Icon d={icons.check} />
+          Format Check
+          {check.failCount > 0 && <span className="rm-pip">{check.failCount}</span>}
+        </button>
         <button className="rm-btn rm-btn-secondary" onClick={() => window.print()}>
           <Icon d={icons.download} />
           Export PDF
@@ -88,6 +100,8 @@ export default function App() {
             </div>
           </div>
         </section>
+
+        <FormatCheck result={check} rd={rd} open={checkOpen} onClose={() => setCheckOpen(false)} />
       </div>
     </div>
   );
