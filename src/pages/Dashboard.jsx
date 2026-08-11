@@ -10,6 +10,14 @@ const timeAgo = (iso) => {
   return `${Math.floor(s / 86400)} day${Math.floor(s / 86400) === 1 ? '' : 's'} ago`;
 };
 
+// Cosmetic gate only — hides the link for everyone else so it doesn't invite
+// clicks that just bounce off a 403. The actual authorization is server-side
+// (api/admin-stats.js checks the real ADMIN_EMAIL env var against the
+// caller's token-derived email); this is a separate, public VITE_-prefixed
+// copy of the same address, safe to ship in the client bundle since knowing
+// it grants no access on its own.
+const isAdmin = (email) => !!import.meta.env.VITE_ADMIN_EMAIL && email === import.meta.env.VITE_ADMIN_EMAIL;
+
 export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
   const { resumes, loading, error, create, rename, remove } = useResumeList(user.id);
   const [creating, setCreating] = useState(false);
@@ -56,7 +64,16 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
               {resumes.map((r) => (
                 <div className="rm-card" key={r.id}>
                   <button className="rm-card-open" onClick={() => onOpen(r.id)}>
-                    <div className="rm-card-thumb"><Icon d={icons.doc} size={34} /></div>
+                    <div className="rm-card-thumb">
+                      <div className="rm-card-thumb-page">
+                        <div className="rm-card-thumb-name">{r.personal_info?.name || 'Untitled'}</div>
+                        <div className="rm-card-thumb-degree">{r.personal_info?.degree || 'No degree set'}</div>
+                        <div className="rm-card-thumb-rule" />
+                        <div className="rm-card-thumb-lines">
+                          <span /><span /><span />
+                        </div>
+                      </div>
+                    </div>
                   </button>
                   <div className="rm-card-info">
                     {renamingId === r.id ? (
@@ -106,8 +123,12 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
             <button className="rm-link" onClick={() => onNavigate('privacy')}>Privacy</button>
             <span className="rm-dot-sep">·</span>
             <button className="rm-link" onClick={() => onNavigate('terms')}>Terms</button>
-            <span className="rm-dot-sep">·</span>
-            <button className="rm-link" onClick={() => onNavigate('admin')}>Admin</button>
+            {isAdmin(user.email) && (
+              <>
+                <span className="rm-dot-sep">·</span>
+                <button className="rm-link" onClick={() => onNavigate('admin')}>Admin</button>
+              </>
+            )}
           </footer>
         </div>
       </div>

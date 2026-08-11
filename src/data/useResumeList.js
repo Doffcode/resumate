@@ -12,9 +12,11 @@ export function useResumeList(userId) {
   const refresh = useCallback(async () => {
     if (!isConnected() || !userId) { setResumes([]); setLoading(false); return; }
     setLoading(true);
+    // personal_info is fetched too — just enough for the dashboard card
+    // preview (name/degree) without pulling the rest of a resume's content.
     const { data, error: err } = await supabase
       .from('resumes')
-      .select('id, title, updated_at')
+      .select('id, title, updated_at, personal_info')
       .order('updated_at', { ascending: false });
     if (err) setError(err.message);
     else { setResumes(data || []); setError(null); }
