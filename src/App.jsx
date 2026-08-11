@@ -10,6 +10,7 @@ import Privacy from './pages/Privacy.jsx';
 import Terms from './pages/Terms.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import ImportPage from './pages/ImportPage.jsx';
+import Landing from './pages/Landing.jsx';
 import './editor/editor.css';
 
 // Two auth-independent routes, both served by the chrome-free PrintPage:
@@ -32,6 +33,8 @@ export default function App() {
   const auth = useAuth();
   const [openResumeId, setOpenResumeId] = useState(null);
   const [view, setView] = useState('dashboard'); // 'dashboard' | 'settings' | 'privacy' | 'terms' | 'admin'
+  const [preAuthView, setPreAuthView] = useState('landing'); // 'landing' | 'auth' | 'privacy' | 'terms'
+  const [authMode, setAuthMode] = useState('signin'); // 'signin' | 'signup'
 
   if (isPrintRoute()) {
     return <PrintPage />;
@@ -48,7 +51,20 @@ export default function App() {
   }
 
   if (!auth.user) {
-    return <AuthScreen auth={auth} />;
+    const toLanding = () => setPreAuthView('landing');
+    if (preAuthView === 'privacy') return <Privacy onBack={toLanding} />;
+    if (preAuthView === 'terms') return <Terms onBack={toLanding} />;
+    if (preAuthView === 'auth') {
+      return <AuthScreen auth={auth} initialMode={authMode} onBack={toLanding} />;
+    }
+    return (
+      <Landing
+        onSignIn={() => { setAuthMode('signin'); setPreAuthView('auth'); }}
+        onGetStarted={() => { setAuthMode('signup'); setPreAuthView('auth'); }}
+        onPrivacy={() => setPreAuthView('privacy')}
+        onTerms={() => setPreAuthView('terms')}
+      />
+    );
   }
 
   if (openResumeId) {

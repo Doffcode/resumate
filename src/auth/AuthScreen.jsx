@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { isConnected } from '../lib/supabase.js';
 
-export default function AuthScreen({ auth }) {
-  const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
+export default function AuthScreen({ auth, initialMode = 'signin', onBack }) {
+  const [mode, setMode] = useState(initialMode); // 'signin' | 'signup'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -32,6 +32,11 @@ export default function AuthScreen({ auth }) {
   return (
     <div className="rm-auth">
       <div className="rm-auth-card">
+        {onBack && (
+          <button className="rm-btn rm-btn-ghost" style={{ marginBottom: 6, marginLeft: -8 }} onClick={onBack}>
+            ← Back
+          </button>
+        )}
         <div className="rm-brand" style={{ justifyContent: 'center', marginBottom: 18 }}>
           <span className="rm-mark">R</span>Resumate
         </div>
