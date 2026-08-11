@@ -50,7 +50,7 @@ export default async function handler(req, res) {
     const bucket = (iso) => iso.slice(0, 10);
     for (let i = 0; i < DAYS; i++) {
       const d = new Date(Date.now() - i * 86400000);
-      byDay[bucket(d.toISOString())] = { pdf_export: 0, ai_call: 0 };
+      byDay[bucket(d.toISOString())] = { pdf_export: 0, ai_call: 0, resume_import: 0 };
     }
     for (const e of events || []) {
       const day = bucket(e.created_at);
@@ -74,6 +74,7 @@ export default async function handler(req, res) {
         signups: users?.users?.length || 0,
         pdf_exports_30d: (events || []).filter((e) => e.event_type === 'pdf_export').length,
         ai_calls_30d: (events || []).filter((e) => e.event_type === 'ai_call').length,
+        resume_imports_30d: (events || []).filter((e) => e.event_type === 'resume_import').length,
       },
       daily: Object.entries(byDay).sort(([a], [b]) => a.localeCompare(b)).map(([day, counts]) => ({ day, ...counts })),
       users: usersOut,

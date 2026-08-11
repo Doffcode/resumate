@@ -435,7 +435,8 @@ body {
 .rm-chart { display: flex; align-items: flex-end; gap: 3px; height: 52px; border-bottom: 1px solid var(--rm-border); padding-bottom: 2px; }
 .rm-chart-col { display: flex; align-items: flex-end; gap: 1px; flex: 1; }
 .rm-bar { flex: 1; background: var(--rm-accent); border-radius: 1px; min-height: 2px; opacity: .8; }
-.rm-chart-col .rm-bar:last-child { background: var(--rm-green); }
+.rm-chart-col .rm-bar:nth-child(2) { background: var(--rm-green); }
+.rm-chart-col .rm-bar:nth-child(3) { background: var(--rm-amber); }
 
 .rm-admin-userlist { border: 1px solid var(--rm-border); border-radius: var(--rm-r); overflow: hidden; }
 .rm-admin-user-row {

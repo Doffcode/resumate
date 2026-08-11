@@ -90,21 +90,23 @@ export default function AdminDashboard({ onBack }) {
                 <div className="rm-admin-counter"><div className="rm-admin-num">{data.totals.signups}</div><div className="rm-hint">Total signups</div></div>
                 <div className="rm-admin-counter"><div className="rm-admin-num">{data.totals.pdf_exports_30d}</div><div className="rm-hint">PDF exports (30d)</div></div>
                 <div className="rm-admin-counter"><div className="rm-admin-num">{data.totals.ai_calls_30d}</div><div className="rm-hint">AI calls (30d)</div></div>
+                <div className="rm-admin-counter"><div className="rm-admin-num">{data.totals.resume_imports_30d}</div><div className="rm-hint">Resume imports (30d)</div></div>
               </div>
 
               <h2 style={{ fontSize: 14, fontWeight: 650, marginTop: 28, marginBottom: 10 }}>Last 30 days</h2>
               <div className="rm-chart">
                 {data.daily.map((d) => {
-                  const max = Math.max(1, ...data.daily.map((x) => Math.max(x.pdf_export, x.ai_call)));
+                  const max = Math.max(1, ...data.daily.map((x) => Math.max(x.pdf_export, x.ai_call, x.resume_import)));
                   return (
                     <div className="rm-chart-col" key={d.day} title={d.day}>
                       <Bar value={d.pdf_export} max={max} />
                       <Bar value={d.ai_call} max={max} />
+                      <Bar value={d.resume_import} max={max} />
                     </div>
                   );
                 })}
               </div>
-              <div className="rm-hint" style={{ marginTop: 6 }}>Left bar = PDF exports · right bar = AI calls, per day</div>
+              <div className="rm-hint" style={{ marginTop: 6 }}>Bars per day: PDF exports · AI calls · resume imports</div>
 
               <h2 style={{ fontSize: 14, fontWeight: 650, marginTop: 28, marginBottom: 10 }}>Users ({data.users.length})</h2>
               <div className="rm-admin-userlist">
