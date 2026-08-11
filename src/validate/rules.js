@@ -128,26 +128,40 @@ export function runChecks(data, fill = []) {
   });
 
   // --- Rule 6: dates present and in a range -------------------------------
-  const missingDate = [];
-  const oddDate = [];
+  // Accept every dash people realistically end up with, not just the three
+  // obvious ones: Word and Google Docs autocorrect a typed "-" into en/em
+  // dashes, and text pasted out of them can carry U+2010 hyphen, U+2011
+  // non-breaking hyphen, U+2012 figure dash or U+2212 minus. Matching only
+  // [-–—] flagged those as "not a range" when they were perfectly fine.
+  const RANGE_SEPARATOR = /[-‐‑‒–—―−~]|\bto\b/i;
+  const SECTION_LABEL = {
+    internships: 'Internships',
+    projects: 'Projects',
+    positions: 'Positions of Responsibility',
+  };
+
+  const dateProblems = [];
   TEXT_ITEM_SECTIONS.forEach((sec) => {
     if (!isVisible(data, sec)) return;
     (data[sec] || []).forEach((i) => {
       const d = (i.date || '').trim();
-      if (!d) missingDate.push({ sec, title: i.title });
-      else if (!/[-–—]|\bto\b/i.test(d)) oddDate.push({ sec, title: i.title, d });
+      // Always name the section and the entry. A bare `Not a range: "Aug 2023"`
+      // is unactionable — there's no way to tell which entry it means.
+      const where = `${SECTION_LABEL[sec] || sec} → "${(i.title || '').trim() || 'untitled'}"`;
+      if (!d) dateProblems.push(`${where} has no date`);
+      else if (!RANGE_SEPARATOR.test(d)) dateProblems.push(`${where} has "${d}" (a single date, not a range)`);
     });
   });
   add({
     id: 'date-ranges',
     rule: 'Rule 6',
     title: 'Tenures given as a range',
-    status: missingDate.length || oddDate.length ? 'fail' : 'pass',
-    detail: missingDate.length
-      ? `Missing a date: ${missingDate.map((x) => x.title || 'untitled').join(', ')}.`
-      : oddDate.length
-        ? `Not a range: "${oddDate[0].d}". Use e.g. Jan 2026 - Mar 2026.`
-        : 'All entries have a date range.',
+    status: dateProblems.length ? 'fail' : 'pass',
+    // Every offender, not just the first — and missing dates and non-ranges
+    // are reported together instead of one hiding the other.
+    detail: dateProblems.length
+      ? `${dateProblems.join('; ')}. Use a range like "Jan 2026 - Mar 2026".`
+      : 'All entries have a date range.',
     fix: null,
   });
 
