@@ -24,6 +24,10 @@ body.rm-landing-active #root { height: auto; overflow: visible; }
   --land-green: #2f6b3a;
   --land-shadow: 0 1px 2px rgba(36, 26, 18, .05), 0 10px 30px rgba(36, 26, 18, .07);
 
+  --land-nav-bg: rgba(243, 238, 227, .86);
+  --land-card: #fff;
+  --land-bad-accent: #9c3b2a;
+
   --land-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
   --land-body: var(--rm-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif);
   --land-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -34,6 +38,47 @@ body.rm-landing-active #root { height: auto; overflow: visible; }
   min-height: 100vh;
   overflow-x: hidden;
 }
+
+/* Same two-layer light/dark pattern as editor.css (see the comment there for
+   why it's two layers). --land-card and the mock resume's own internal
+   colors (.rm-land-mock and everything inside it) are deliberately NOT
+   overridden here — that card depicts an actual white resume page, same
+   reasoning as .resume-page and .rm-card-thumb-page staying light always. */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .rm-landing {
+    --land-paper: #1a1510;
+    --land-paper-2: #221b14;
+    --land-ink: #ede1d0;
+    --land-ink-2: #b7a890;
+    --land-ink-3: #83745f;
+    --land-line: #3a3021;
+    --land-maroon: #d9573a;
+    --land-maroon-deep: #ea6c4b;
+    --land-gold: #c99a3e;
+    --land-green: #63b177;
+    --land-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+    --land-nav-bg: rgba(26, 21, 16, .86);
+    --land-card: #241d17;
+    --land-bad-accent: #e0806a;
+  }
+}
+html[data-theme="dark"] .rm-landing {
+  --land-paper: #1a1510;
+  --land-paper-2: #221b14;
+  --land-ink: #ede1d0;
+  --land-ink-2: #b7a890;
+  --land-ink-3: #83745f;
+  --land-line: #3a3021;
+  --land-maroon: #d9573a;
+  --land-maroon-deep: #ea6c4b;
+  --land-gold: #c99a3e;
+  --land-green: #63b177;
+  --land-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .35);
+  --land-nav-bg: rgba(26, 21, 16, .86);
+  --land-card: #241d17;
+  --land-bad-accent: #e0806a;
+}
+
 .rm-landing * { box-sizing: border-box; }
 .rm-landing ::selection { background: var(--land-maroon); color: var(--land-maroon-ink); }
 .rm-landing button { font: inherit; color: inherit; cursor: pointer; }
@@ -66,7 +111,7 @@ body.rm-landing-active #root { height: auto; overflow: visible; }
   position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 28px;
-  background: rgba(243, 238, 227, .86);
+  background: var(--land-nav-bg);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--land-line);
 }
@@ -184,23 +229,23 @@ body.rm-landing-active #root { height: auto; overflow: visible; }
 .rm-land-compare-col { padding: 26px 28px; }
 .rm-land-compare-col + .rm-land-compare-col { border-left: 1px solid var(--land-line); }
 .rm-land-compare-col.bad { background: var(--land-paper-2); }
-.rm-land-compare-col.good { background: #fff; }
+.rm-land-compare-col.good { background: var(--land-card); }
 .rm-land-compare-label {
   font-family: var(--land-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
   display: flex; align-items: center; gap: 7px; margin-bottom: 16px; font-weight: 500;
 }
-.rm-land-compare-col.bad .rm-land-compare-label { color: #9c3b2a; }
+.rm-land-compare-col.bad .rm-land-compare-label { color: var(--land-bad-accent); }
 .rm-land-compare-col.good .rm-land-compare-label { color: var(--land-green); }
 .rm-land-compare-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 13px; }
 .rm-land-compare-list li { display: flex; gap: 10px; font-size: 14px; line-height: 1.5; }
 .rm-land-compare-list li svg { flex: 0 0 auto; margin-top: 3px; width: 14px; height: 14px; }
-.rm-land-compare-col.bad svg { stroke: #9c3b2a; }
+.rm-land-compare-col.bad svg { stroke: var(--land-bad-accent); }
 .rm-land-compare-col.good svg { stroke: var(--land-green); }
 .rm-land-compare-list b { font-weight: 600; }
 
 /* ---------- feature cards ---------- */
 .rm-land-features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--land-line); border: 1px solid var(--land-line); border-radius: 6px; overflow: hidden; }
-.rm-land-feature { background: #fff; padding: 24px 22px 26px; display: flex; flex-direction: column; }
+.rm-land-feature { background: var(--land-card); padding: 24px 22px 26px; display: flex; flex-direction: column; }
 .rm-land-feature-no { font-family: var(--land-mono); font-size: 11px; color: var(--land-ink-3); letter-spacing: .05em; margin-bottom: 16px; }
 .rm-land-feature-icon { width: 30px; height: 30px; stroke: var(--land-maroon); fill: none; stroke-width: 1.5; margin-bottom: 14px; }
 .rm-land-feature h3 { font-family: var(--land-display); font-weight: 600; font-size: 17px; margin: 0 0 8px; letter-spacing: -.005em; }

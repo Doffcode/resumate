@@ -60,7 +60,17 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
           {loading ? (
             <p className="rm-hint">Loading…</p>
           ) : (
-            <div className="rm-grid">
+            <>
+              {resumes.length === 0 && (
+                <div className="rm-dash-empty">
+                  <Icon d={icons.doc} size={26} />
+                  <div>
+                    <div className="rm-dash-empty-title">No resumes yet</div>
+                    <div className="rm-hint">Start from scratch, or import one you already have — either way, you'll be editing in a few seconds.</div>
+                  </div>
+                </div>
+              )}
+              <div className="rm-grid">
               {resumes.map((r) => (
                 <div className="rm-card" key={r.id}>
                   <button className="rm-card-open" onClick={() => onOpen(r.id)}>
@@ -114,7 +124,8 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
                 <Icon d={icons.upload} size={22} />
                 Import old resume
               </button>
-            </div>
+              </div>
+            </>
           )}
 
           <footer className="rm-dash-footer">

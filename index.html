@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resumate</title>
+    <script>
+      // Sets the theme attribute synchronously, before any CSS or React has
+      // run, so there's no flash of the wrong theme on load. Mirrors the
+      // logic in src/lib/useTheme.js exactly (same storage key, same
+      // fallback) — kept here only because it has to run this early to do
+      // any good; the hook is still the source of truth once React mounts.
+      (function () {
+        try {
+          var t = localStorage.getItem('resumate.theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

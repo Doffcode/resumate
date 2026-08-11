@@ -24,7 +24,7 @@ import './editor/editor.css';
 //               ownership-verified resume via page.evaluateOnNewDocument
 //               before navigating here, so Puppeteer never needs to hold a
 //               Supabase session at all.
-const isPrintRoute = () => {
+export const isPrintRoute = () => {
   const p = new URLSearchParams(location.search);
   return p.has('golden') || p.has('print');
 };
