@@ -72,22 +72,23 @@ not just built:**
 - PDF export: real auth, real resume data, rate limiting. Verified against a
   real Vercel serverless deployment — cold ~4.9s, warm ~2.7s render times —
   and the RLS-based security model was tested, not assumed (a second test
-  user requesting the first user's resume_id gets 404).
-- Privacy policy, terms, self-service account+data deletion.
+  user requesting the first user's resume_id gets 404). The 5/hour rate
+  limit was pushed to its actual boundary and correctly returned 429 on the
+  6th call, with export_logs confirmed populating in the database.
+- Privacy policy, terms, self-service account+data deletion. Deletion is
+  real, not data-only: a disposable test account was deleted, then a
+  sign-in attempt with the same credentials correctly failed with
+  `invalid_credentials` — the login itself is gone, not just the resumes.
 - Mobile responsive pass: drawer sidebar, scrollable topbar, horizontally
   scrollable A4 preview, zero page-level overflow on every screen.
 - Admin dashboard: counters, 30-day chart, per-user drill-down. Negative
   paths (401/403) verified against the live deployment.
 
-**Known gap, one fix away from fully working:** `SUPABASE_SERVICE_ROLE_KEY`
-in Vercel is the old `eyJ...` JWT format; this project has legacy API keys
-disabled, so every service-role write/read fails with "Legacy API keys are
-disabled" (confirmed via `vercel logs`, not guessed). This blocks:
-export rate-limit enforcement (fails open — exports still work, just
-unlimited), account deletion's actual `auth.admin.deleteUser` call, and the
-admin dashboard's data reads. Fix: replace it with the `sb_secret_...` key
-from Supabase → Project Settings → API Keys. Nothing else needs to change —
-all three were built against this key from the start.
+`SUPABASE_SERVICE_ROLE_KEY` in Vercel was originally the legacy `eyJ...` JWT
+format, which this project rejects ("Legacy API keys are disabled" — this
+silently blocked rate-limit enforcement, real account deletion, and admin
+reads until it was replaced with the `sb_secret_...` key. All three were
+retested end-to-end afterward and now work for real.
 
 **Explicitly deferred, not started:** Google OAuth (email/password only for
 now), a second (Render/Railway) PDF-export fallback host beyond Vercel +
