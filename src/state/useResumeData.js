@@ -18,9 +18,28 @@ const blank = () => ({ ...clone(defaultResume), schemaVersion: SCHEMA_VERSION })
 // shape-safety to data injected from the export function.
 export function migrate(saved) {
   const data = { ...blank(), ...saved };
-  for (const key of ['personalInfo', 'layoutSettings', 'pageBreaks', 'sectionVisibility', 'footer']) {
+  for (const key of ['personalInfo', 'layoutSettings', 'sectionVisibility', 'footer']) {
     data[key] = { ...defaultResume[key], ...(saved[key] || {}) };
   }
+
+  // pageBreaks needs two different behaviours, and conflating them was a bug.
+  //
+  // It is stored as an array of only the *enabled* section ids (the live table
+  // has a page_breaks_is_array check constraint), so within a saved resume a
+  // break that is off is simply absent — "off" and "unset" look identical.
+  // Merging defaults on top therefore resurrected any break the student had
+  // deliberately turned off: the editor showed the right page count from
+  // in-memory state, while a reload or a PDF export re-enabled the default
+  // break and silently produced an extra page.
+  //
+  // But when there is no pageBreaks key at all (a brand new resume, an
+  // imported one, or the ?golden=1 fixture) the defaults are exactly what we
+  // want. So: key present -> absent means off; key missing -> use defaults.
+  const allBreaksOff = Object.fromEntries(Object.keys(defaultResume.pageBreaks).map((k) => [k, false]));
+  data.pageBreaks = saved.pageBreaks
+    ? { ...allBreaksOff, ...saved.pageBreaks }
+    : { ...defaultResume.pageBreaks };
+
   if (!data.extracurriculars || Array.isArray(data.extracurriculars)) {
     data.extracurriculars = clone(defaultResume.extracurriculars);
   }
