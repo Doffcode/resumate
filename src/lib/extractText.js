@@ -26,11 +26,21 @@ async function extractPdf(file) {
   pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
   const buf = await file.arrayBuffer();
-  const doc = await pdfjs.getDocument({
-    data: buf,
-    isEvalSupported: false, // defence in depth against the class of bug above
-    disableFontFace: true,  // we want text, never rendering
-  }).promise;
+  let doc;
+  try {
+    doc = await pdfjs.getDocument({
+      data: buf,
+      isEvalSupported: false, // defence in depth against the class of bug above
+      disableFontFace: true,  // we want text, never rendering
+    }).promise;
+  } catch {
+    // pdf.js throws its own internal-sounding messages here ("Invalid PDF
+    // structure.", "The PDF file is empty...") for anything from a 0-byte
+    // file to a renamed non-PDF — confirmed by actually uploading both.
+    // Neither means anything to a student; give them the same curated
+    // message as any other unreadable file.
+    throw new ExtractError("Couldn't read that PDF — it may be corrupted. Try re-exporting it and uploading again.");
+  }
 
   let out = '';
   for (let i = 1; i <= doc.numPages; i++) {
@@ -59,8 +69,12 @@ async function extractPdf(file) {
 async function extractDocx(file) {
   const mammoth = await import('mammoth');
   const buf = await file.arrayBuffer();
-  const { value } = await mammoth.extractRawText({ arrayBuffer: buf });
-  return value;
+  try {
+    const { value } = await mammoth.extractRawText({ arrayBuffer: buf });
+    return value;
+  } catch {
+    throw new ExtractError("Couldn't read that Word file — it may be corrupted. Try re-saving it and uploading again.");
+  }
 }
 
 export async function extractText(file) {
