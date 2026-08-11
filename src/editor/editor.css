@@ -2,30 +2,36 @@
    style a .resume-* element — the sealed renderer owns its own CSS entirely.
    If you find yourself writing `.resume-` in this file, stop. */
 
+/* Same palette as the landing page (src/pages/landing.css): cream paper and
+   the NIT Trichy logo's own maroon, not a generic SaaS indigo. Kept as
+   separate --rm-* tokens (rather than reusing --land-*) so the workspace and
+   the marketing page can still be edited independently. */
 :root {
-  --rm-bg: #f7f7f8;
+  --rm-bg: #f3eee3;
   --rm-surface: #fff;
-  --rm-surface-2: #fbfbfc;
-  --rm-surface-3: #f2f2f4;
-  --rm-border: #e8e8ea;
-  --rm-border-strong: #d9d9de;
-  --rm-text: #18181b;
-  --rm-text-2: #5c5c66;
-  --rm-text-3: #8e8e98;
-  --rm-accent: #4f46e5;
-  --rm-accent-hover: #4338ca;
-  --rm-accent-soft: #eef2ff;
-  --rm-accent-border: #c7d2fe;
-  --rm-green: #15803d;
+  --rm-surface-2: #faf7f0;
+  --rm-surface-3: #efe7d7;
+  --rm-border: #ddd3bf;
+  --rm-border-strong: #c9bda3;
+  --rm-text: #241a12;
+  --rm-text-2: #6b5d4f;
+  --rm-text-3: #9c8f7d;
+  --rm-accent: #7a1b04;
+  --rm-accent-hover: #4b1002;
+  --rm-accent-soft: #f7ece2;
+  --rm-accent-border: #e0c2a8;
+  --rm-green: #2f6b3a;
   --rm-amber: #b45309;
   --rm-amber-soft: #fffbeb;
   --rm-amber-border: #fde68a;
   --rm-red: #dc2626;
-  --rm-r: 10px;
-  --rm-r-sm: 7px;
-  --rm-shadow-sm: 0 1px 2px rgba(16, 17, 26, .04), 0 1px 3px rgba(16, 17, 26, .05);
-  --rm-shadow-lg: 0 12px 32px rgba(16, 17, 26, .10), 0 2px 8px rgba(16, 17, 26, .06);
+  --rm-r: 9px;
+  --rm-r-sm: 6px;
+  --rm-shadow-sm: 0 1px 2px rgba(36, 26, 18, .05), 0 1px 3px rgba(36, 26, 18, .06);
+  --rm-shadow-lg: 0 12px 32px rgba(36, 26, 18, .11), 0 2px 8px rgba(36, 26, 18, .07);
   --rm-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --rm-font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --rm-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 html, body, #root { height: 100%; }
@@ -54,9 +60,10 @@ body {
 }
 .rm-brand { display: flex; align-items: center; gap: 8px; font-weight: 650; font-size: 15px; letter-spacing: -.01em; }
 .rm-mark {
-  width: 24px; height: 24px; border-radius: 6px;
-  background: linear-gradient(140deg, #6366f1, #4f46e5);
-  display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 700;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--rm-accent);
+  display: grid; place-items: center; color: var(--rm-accent-soft);
+  font-family: var(--rm-font-display); font-style: italic; font-weight: 600; font-size: 13px;
 }
 .rm-sep { width: 1px; height: 20px; background: var(--rm-border); }
 .rm-saved { display: flex; align-items: center; gap: 6px; color: var(--rm-text-3); font-size: 12.5px; }
@@ -90,10 +97,10 @@ body {
   padding: 12px 14px 10px; border-bottom: 1px solid var(--rm-border);
   display: flex; align-items: center; justify-content: space-between;
 }
-.rm-editor-head h2 { font-size: 13px; font-weight: 650; letter-spacing: .02em; text-transform: uppercase; color: var(--rm-text-3); }
+.rm-editor-head h2 { font-family: var(--rm-font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--rm-text-3); }
 .rm-editor-scroll { flex: 1; overflow-y: auto; padding: 8px 10px 60px; }
 .rm-editor-scroll::-webkit-scrollbar { width: 10px; }
-.rm-editor-scroll::-webkit-scrollbar-thumb { background: #dcdce1; border-radius: 99px; border: 3px solid var(--rm-surface); }
+.rm-editor-scroll::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: 99px; border: 3px solid var(--rm-surface); }
 
 .rm-section { border: 1px solid var(--rm-border); border-radius: var(--rm-r); margin-bottom: 7px; }
 .rm-section.is-open { box-shadow: var(--rm-shadow-sm); border-color: var(--rm-border-strong); }
@@ -109,7 +116,7 @@ body {
 /* switch */
 .rm-switch { position: relative; width: 30px; height: 18px; flex: 0 0 auto; display: inline-block; }
 .rm-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 2; }
-.rm-track { position: absolute; inset: 0; background: #d4d4d9; border-radius: 99px; transition: background .16s; pointer-events: none; }
+.rm-track { position: absolute; inset: 0; background: var(--rm-border-strong); border-radius: 99px; transition: background .16s; pointer-events: none; }
 .rm-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .16s; pointer-events: none; }
 .rm-switch input:checked ~ .rm-track { background: var(--rm-accent); }
 .rm-switch input:checked ~ .rm-thumb { transform: translateX(12px); }
@@ -123,7 +130,7 @@ body {
   border: 1px solid var(--rm-border-strong); border-radius: var(--rm-r-sm);
   font-size: 13.5px; transition: border-color .12s, box-shadow .12s;
 }
-.rm-input:focus, .rm-textarea:focus { outline: none; border-color: var(--rm-accent); box-shadow: 0 0 0 3px rgba(79,70,229,.12); }
+.rm-input:focus, .rm-textarea:focus { outline: none; border-color: var(--rm-accent); box-shadow: 0 0 0 3px rgba(122,27,4,.13); }
 .rm-textarea { resize: vertical; min-height: 66px; line-height: 1.5; }
 .rm-row { display: flex; gap: 9px; }
 .rm-row > * { flex: 1; min-width: 0; }
@@ -169,7 +176,7 @@ body {
 .rm-pill button { padding: 3px 9px; border-radius: 5px; font-size: 12.5px; font-weight: 550; color: var(--rm-text-2); }
 .rm-pill button:hover { background: var(--rm-surface-3); color: var(--rm-text); }
 .rm-zoomval { min-width: 46px; text-align: center; color: var(--rm-text); font-size: 12.5px; font-weight: 550; }
-.rm-pagelabel { font-size: 12.5px; color: var(--rm-text-3); font-weight: 500; }
+.rm-pagelabel { font-family: var(--rm-font-mono); font-size: 11.5px; color: var(--rm-text-3); }
 
 .rm-warn {
   display: flex; align-items: center; gap: 8px;
@@ -180,7 +187,7 @@ body {
 
 .rm-canvas { flex: 1; overflow: auto; padding: 26px 0 60px; }
 .rm-canvas::-webkit-scrollbar { width: 12px; height: 12px; }
-.rm-canvas::-webkit-scrollbar-thumb { background: #d6d6dc; border-radius: 99px; border: 3px solid var(--rm-bg); }
+.rm-canvas::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: 99px; border: 3px solid var(--rm-bg); }
 .rm-pages { display: flex; flex-direction: column; align-items: center; gap: 22px; }
 
 /* The A4 page itself is styled entirely by the sealed renderer. This only
@@ -228,7 +235,7 @@ body {
 .rm-badge.is-fail { color: var(--rm-amber); background: var(--rm-amber-soft); border-color: var(--rm-amber-border); }
 .rm-drawer-body { flex: 1; overflow-y: auto; padding: 14px; }
 .rm-drawer-body::-webkit-scrollbar { width: 10px; }
-.rm-drawer-body::-webkit-scrollbar-thumb { background: #dcdce1; border-radius: 99px; border: 3px solid var(--rm-surface); }
+.rm-drawer-body::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: 99px; border: 3px solid var(--rm-surface); }
 .rm-drawer-intro { font-size: 12.5px; color: var(--rm-text-2); margin-bottom: 12px; }
 .rm-fixall { width: 100%; justify-content: center; margin-bottom: 16px; }
 
@@ -248,7 +255,7 @@ body {
 .rm-check-advisory .rm-check-mark { background: var(--rm-text-3); }
 .rm-check-body { min-width: 0; flex: 1; }
 .rm-check-title { font-size: 13px; font-weight: 600; display: flex; align-items: baseline; gap: 7px; }
-.rm-check-rule { font-size: 10.5px; font-weight: 550; color: var(--rm-text-3); flex: 0 0 auto; }
+.rm-check-rule { font-family: var(--rm-font-mono); font-size: 10px; color: var(--rm-text-3); flex: 0 0 auto; }
 .rm-check-detail { font-size: 12px; color: var(--rm-text-2); margin-top: 2px; line-height: 1.45; }
 .rm-check-fix { height: 26px; font-size: 12px; margin-top: 8px; }
 
@@ -292,8 +299,8 @@ body {
   border-radius: var(--rm-r-sm); padding: 8px 10px; margin: 0 11px 11px; font-size: 11.5px; line-height: 1.5;
 }
 
-.rm-modal-backdrop { position: fixed; inset: 0; background: rgba(16,17,26,.45); display: grid; place-items: center; z-index: 100; }
-.rm-modal { background: var(--rm-surface); border-radius: 12px; padding: 20px; width: 400px; max-width: 90vw; box-shadow: var(--rm-shadow-lg); }
+.rm-modal-backdrop { position: fixed; inset: 0; background: rgba(36,26,18,.45); display: grid; place-items: center; z-index: 100; }
+.rm-modal { background: var(--rm-surface); border-radius: var(--rm-r); padding: 20px; width: 400px; max-width: 90vw; box-shadow: var(--rm-shadow-lg); }
 .rm-modal h4 { font-size: 15px; font-weight: 650; margin-bottom: 8px; }
 .rm-modal p { font-size: 13px; color: var(--rm-text-2); line-height: 1.55; }
 .rm-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
@@ -306,10 +313,10 @@ body {
 }
 .rm-auth-card {
   width: 380px; max-width: 90vw; background: var(--rm-surface);
-  border: 1px solid var(--rm-border); border-radius: 14px; padding: 28px;
+  border: 1px solid var(--rm-border); border-radius: 10px; padding: 28px;
   box-shadow: var(--rm-shadow-lg);
 }
-.rm-auth-card h1 { font-size: 18px; font-weight: 650; margin-bottom: 16px; text-align: center; }
+.rm-auth-card h1 { font-size: 20px; margin-bottom: 16px; text-align: center; }
 .rm-auth-submit { width: 100%; justify-content: center; margin-top: 6px; height: 36px; }
 .rm-auth-switch { width: 100%; justify-content: center; margin-top: 12px; font-size: 12.5px; }
 .rm-notice.is-ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: var(--rm-green); border-radius: var(--rm-r-sm); padding: 9px 11px; font-size: 12.5px; margin-top: 10px; }
@@ -322,8 +329,15 @@ body {
 }
 .rm-dash-body { flex: 1; overflow-y: auto; }
 .rm-dash-inner { max-width: 940px; margin: 0 auto; padding: 44px 24px 80px; }
-.rm-dash-inner h1 { font-size: 26px; font-weight: 680; letter-spacing: -.02em; margin-bottom: 5px; }
+.rm-dash-inner h1 { font-size: 28px; margin-bottom: 6px; }
 .rm-dash-sub { color: var(--rm-text-2); margin-bottom: 26px; font-size: 14px; }
+
+/* Every page heading (dashboard, settings, admin, import, legal, auth) uses
+   the same restrained display face the landing page's headline uses —
+   the one place this UI borrows a serif, kept out of dense form/body text. */
+.rm-dash-inner h1, .rm-auth-card h1 {
+  font-family: var(--rm-font-display); font-weight: 600; letter-spacing: -.01em;
+}
 
 .rm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 15px; }
 .rm-card {
@@ -359,7 +373,7 @@ body {
 .rm-danger-zone p { font-size: 13px; color: var(--rm-text-2); line-height: 1.5; margin-bottom: 12px; }
 .rm-danger-confirm p { font-size: 13px; color: var(--rm-text); margin-bottom: 10px; }
 
-.rm-legal h1 { font-size: 22px; font-weight: 680; margin-bottom: 6px; }
+.rm-legal h1 { font-size: 24px; margin-bottom: 6px; }
 .rm-legal h2 { font-size: 14px; font-weight: 650; margin-top: 20px; margin-bottom: 6px; }
 .rm-legal p { font-size: 13.5px; color: var(--rm-text-2); line-height: 1.6; }
 
@@ -371,7 +385,7 @@ body {
 /* ---------- mobile (<=768px) ---------- */
 .rm-drawer-toggle { display: none; }
 .rm-drawer-backdrop {
-  position: fixed; inset: 0; background: rgba(16,17,26,.4); z-index: 29;
+  position: fixed; inset: 0; background: rgba(36,26,18,.4); z-index: 29;
 }
 
 @media (max-width: 768px) {
@@ -416,7 +430,7 @@ body {
   flex: 1; border: 1px solid var(--rm-border); border-radius: var(--rm-r);
   background: var(--rm-surface); padding: 14px 16px;
 }
-.rm-admin-num { font-size: 26px; font-weight: 680; letter-spacing: -.02em; }
+.rm-admin-num { font-family: var(--rm-font-mono); font-size: 24px; font-weight: 500; }
 
 .rm-chart { display: flex; align-items: flex-end; gap: 3px; height: 52px; border-bottom: 1px solid var(--rm-border); padding-bottom: 2px; }
 .rm-chart-col { display: flex; align-items: flex-end; gap: 1px; flex: 1; }
@@ -466,4 +480,4 @@ body {
   border: 1px solid var(--rm-accent-border); background: var(--rm-accent-soft);
   padding: 4px 10px; border-radius: var(--rm-r-sm); cursor: pointer;
 }
-.rm-photo-btn:hover { background: #e0e7ff; }
+.rm-photo-btn:hover { background: #f0dcc9; }
