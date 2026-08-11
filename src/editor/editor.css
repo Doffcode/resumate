@@ -431,3 +431,39 @@ body {
 }
 .rm-admin-user-row:last-child { border-bottom: none; }
 .rm-admin-user-row:hover { background: var(--rm-surface-2); }
+
+/* ---------- resume importer ---------- */
+.rm-dropzone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  border: 1.5px dashed var(--rm-border-strong); border-radius: 12px;
+  padding: 36px 20px; margin-top: 18px; cursor: pointer; text-align: center;
+  color: var(--rm-text-2); transition: border-color .12s, background .12s, color .12s;
+}
+.rm-dropzone:hover { border-color: var(--rm-accent); color: var(--rm-accent); background: var(--rm-accent-soft); }
+.rm-dropzone input[type="file"] { display: none; }
+.rm-dropzone .rm-hint { margin-top: 2px; }
+
+.rm-import-working { margin-top: 20px; padding: 18px; border: 1px solid var(--rm-border); border-radius: var(--rm-r); background: var(--rm-surface); }
+
+.rm-import-section { margin-top: 18px; border: 1px solid var(--rm-border); border-radius: var(--rm-r); background: var(--rm-surface); padding: 12px 14px; }
+.rm-import-sechead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 650; margin-bottom: 8px; }
+.rm-import-sechead .rm-hint { margin-top: 0; }
+.rm-import-item { display: flex; align-items: flex-start; gap: 9px; padding: 6px 0; font-size: 13px; line-height: 1.45; cursor: pointer; }
+.rm-import-item input { margin-top: 3px; flex: 0 0 auto; cursor: pointer; }
+.rm-import-item input:disabled { cursor: not-allowed; }
+.rm-import-item input:disabled + span { opacity: .45; }
+
+/* ---------- photo upload ---------- */
+.rm-photo-row { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+.rm-photo-preview {
+  width: 46px; height: 50px; border: 1px solid var(--rm-border-strong); border-radius: 4px;
+  object-fit: cover; background: var(--rm-surface-3); flex: 0 0 auto;
+}
+.rm-photo-actions { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+.rm-photo-actions input[type="file"] { display: none; }
+.rm-photo-btn {
+  font-size: 12.5px; font-weight: 550; color: var(--rm-accent);
+  border: 1px solid var(--rm-accent-border); background: var(--rm-accent-soft);
+  padding: 4px 10px; border-radius: var(--rm-r-sm); cursor: pointer;
+}
+.rm-photo-btn:hover { background: #e0e7ff; }

@@ -23,12 +23,17 @@ export function useResumeList(userId) {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  const create = useCallback(async (title) => {
-    const row = { user_id: userId, title, ...toRow({ ...defaultResume, schemaVersion: SCHEMA_VERSION }) };
-    const { data, error: err } = await supabase.from('resumes').insert(row).select('id').single();
+  // `data` lets the importer seed a new resume with parsed content. It must
+  // already have been through migrate() so app-config fields (footer,
+  // pageBreaks, layoutSettings…) are present and correct — this function
+  // does not sanitise, it just writes.
+  const create = useCallback(async (title, data = null) => {
+    const content = data || { ...defaultResume, schemaVersion: SCHEMA_VERSION };
+    const row = { user_id: userId, title, ...toRow(content) };
+    const { data: inserted, error: err } = await supabase.from('resumes').insert(row).select('id').single();
     if (err) throw new Error(err.message);
     await refresh();
-    return data.id;
+    return inserted.id;
   }, [userId, refresh]);
 
   const rename = useCallback(async (id, title) => {

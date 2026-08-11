@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { allSections } from '../data/defaultResume.js';
 import { LIMITS } from '../state/useResumeData.js';
 import { resolveSectionTitle } from '../resume/text.jsx';
+import { fileToResizedDataUrl, PhotoError } from '../lib/photo.js';
+import defaultPhoto from '../assets/student_photo.png';
 import { Icon, icons, Switch, Field, IconBtn, Breaker, AddButton, ItemControls } from './controls.jsx';
 
 const ITEM_SECTIONS = ['internships', 'projects', 'positions'];
@@ -9,7 +11,18 @@ const ITEM_SECTIONS = ['internships', 'projects', 'positions'];
 export default function Editor({ rd, mobileOpen }) {
   const { data } = rd;
   const [open, setOpen] = useState({ personalInfo: true, projects: true });
+  const [photoError, setPhotoError] = useState(null);
   const toggleOpen = (id) => setOpen((o) => ({ ...o, [id]: !o[id] }));
+
+  const handlePhoto = async (file) => {
+    if (!file) return;
+    setPhotoError(null);
+    try {
+      rd.setPersonal('photo', await fileToResizedDataUrl(file));
+    } catch (e) {
+      setPhotoError(e instanceof PhotoError ? e.message : 'Could not use that image.');
+    }
+  };
 
   const countFor = (sec) => {
     if (sec.type === 'extracurriculars') {
@@ -46,6 +59,26 @@ export default function Editor({ rd, mobileOpen }) {
                 <Field label="E-mail" value={data.personalInfo.email} onChange={(v) => rd.setPersonal('email', v)} />
                 <Field label="Contact" value={data.personalInfo.contact} onChange={(v) => rd.setPersonal('contact', v)} />
               </div>
+              <div className="rm-field">
+                <label>Passport photo</label>
+                <div className="rm-photo-row">
+                  <img className="rm-photo-preview" src={data.personalInfo.photo || defaultPhoto} alt="" />
+                  <div className="rm-photo-actions">
+                    <label className="rm-photo-btn">
+                      {data.personalInfo.photo ? 'Change photo' : 'Upload photo'}
+                      <input type="file" accept="image/*" onChange={(e) => handlePhoto(e.target.files?.[0])} />
+                    </label>
+                    {data.personalInfo.photo && (
+                      <button className="rm-link" onClick={() => rd.setPersonal('photo', '')}>Remove</button>
+                    )}
+                  </div>
+                </div>
+                {photoError && <div className="rm-notice is-error" style={{ marginTop: 8 }}>{photoError}</div>}
+                <div className="rm-hint">
+                  Cropped to the official box automatically. Use a formal photo in TP formals (rules 4 and 7).
+                </div>
+              </div>
+
               <div className="rm-hint">Logo, fonts and spacing are locked to the official NIT Trichy format.</div>
             </div>
           )}

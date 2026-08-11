@@ -92,6 +92,11 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
                 <Icon d={icons.plus} size={22} />
                 {creating ? 'Creating…' : 'New resume'}
               </button>
+
+              <button className="rm-card rm-card-new" onClick={() => onNavigate('import')}>
+                <Icon d={icons.upload} size={22} />
+                Import old resume
+              </button>
             </div>
           )}
 

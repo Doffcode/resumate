@@ -9,6 +9,7 @@ import Settings from './pages/Settings.jsx';
 import Privacy from './pages/Privacy.jsx';
 import Terms from './pages/Terms.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import ImportPage from './pages/ImportPage.jsx';
 import './editor/editor.css';
 
 // Two auth-independent routes, both served by the chrome-free PrintPage:
@@ -67,6 +68,15 @@ export default function App() {
   }
   if (view === 'admin') {
     return <AdminDashboard onBack={toDashboard} />;
+  }
+  if (view === 'import') {
+    return (
+      <ImportPage
+        user={auth.user}
+        onCancel={toDashboard}
+        onCreated={(id) => { setView('dashboard'); setOpenResumeId(id); }}
+      />
+    );
   }
 
   return (

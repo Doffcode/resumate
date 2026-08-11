@@ -20,6 +20,7 @@ export const icons = {
   doc: ['M14 3v5h5', 'M6 3h8l5 5v13H6z'],
   edit: ['M4 20h4L18.5 9.5a2.1 2.1 0 00-3-3L5 17v3z'],
   menu: ['M4 6h16', 'M4 12h16', 'M4 18h16'],
+  upload: ['M12 3v12', 'M7 8l5-5 5 5', 'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4'],
 };
 
 export function Switch({ checked, onChange, label }) {
