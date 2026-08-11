@@ -75,6 +75,31 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Rate limit — both modes below call DeepSeek, a paid API, and until now
+    // neither had any cap (unlike api/parse-resume.js's identical 10/hour
+    // check, which exists for exactly this reason). Counts the same
+    // 'ai_call' rows this function already logs on success, so no new table.
+    // Fails CLOSED: a counting error blocks the call rather than allowing it.
+    const AI_RATE_LIMIT = 10;
+    const AI_RATE_WINDOW_MS = 60 * 60 * 1000;
+    const since = new Date(Date.now() - AI_RATE_WINDOW_MS).toISOString();
+    const { count: recentAiCalls, error: rateError } = await supabaseAdmin
+      .from('admin_stats')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('event_type', 'ai_call')
+      .gte('created_at', since);
+    if (rateError || (recentAiCalls ?? 0) >= AI_RATE_LIMIT) {
+      return new Response(
+        JSON.stringify({
+          error: rateError
+            ? 'Rate limit check failed. Please try again shortly.'
+            : `Rate limit reached: ${AI_RATE_LIMIT} AI requests per hour. Try again later.`,
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // ------------------------------------------------------------------------
     // MODE A: DRAFT ONE NEW PROJECT FOR A MISSING REQUIREMENT
     // ------------------------------------------------------------------------
