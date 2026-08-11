@@ -18,12 +18,11 @@ const MAX_BYTES = 8 * 1024 * 1024;
 
 export class PhotoError extends Error {}
 
-export async function fileToResizedDataUrl(file) {
-  if (!file) throw new PhotoError('No image selected.');
-  if (!file.type.startsWith('image/')) throw new PhotoError('Please choose an image file (JPG or PNG).');
-  if (file.size > MAX_BYTES) throw new PhotoError('That image is larger than 8 MB. Please choose a smaller one.');
-
-  const bitmap = await createImageBitmap(file).catch(() => {
+// Shared by both the manual upload (File from an <input>) and the resume
+// importer's extracted-photo candidate (Blob built from a data URL) — the
+// crop-to-box logic is identical either way.
+async function blobToResizedDataUrl(blob) {
+  const bitmap = await createImageBitmap(blob).catch(() => {
     throw new PhotoError("Couldn't read that image. Try a JPG or PNG.");
   });
 
@@ -42,4 +41,18 @@ export async function fileToResizedDataUrl(file) {
   bitmap.close?.();
 
   return canvas.toDataURL('image/jpeg', 0.88);
+}
+
+export async function fileToResizedDataUrl(file) {
+  if (!file) throw new PhotoError('No image selected.');
+  if (!file.type.startsWith('image/')) throw new PhotoError('Please choose an image file (JPG or PNG).');
+  if (file.size > MAX_BYTES) throw new PhotoError('That image is larger than 8 MB. Please choose a smaller one.');
+  return blobToResizedDataUrl(file);
+}
+
+// For a photo candidate already extracted from an uploaded resume (a data
+// URL, not a File from an <input>) — used by the importer's review screen.
+export async function dataUrlToResizedDataUrl(dataUrl) {
+  const blob = await fetch(dataUrl).then((r) => r.blob());
+  return blobToResizedDataUrl(blob);
 }

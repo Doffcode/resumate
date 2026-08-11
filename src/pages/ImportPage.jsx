@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { extractText, ExtractError } from '../lib/extractText.js';
+import { findEmbeddedPhoto } from '../lib/extractPhoto.js';
+import { dataUrlToResizedDataUrl } from '../lib/photo.js';
 import { migrate, LIMITS } from '../state/useResumeData.js';
 import { useResumeList } from '../data/useResumeList.js';
 import { Icon, icons } from '../editor/controls.jsx';
@@ -35,13 +37,22 @@ export default function ImportPage({ user, onCancel, onCreated }) {
   const [parsed, setParsed] = useState(null);
   const [selected, setSelected] = useState({});
   const [fileName, setFileName] = useState('');
+  const [photoCandidate, setPhotoCandidate] = useState(null); // raw extracted data URL, native size
+  const [usePhoto, setUsePhoto] = useState(true);
 
   const handleFile = async (file) => {
     if (!file) return;
     setError(null);
     setFileName(file.name);
+    setPhotoCandidate(null);
     setStage('working');
     try {
+      // Independent of the text parse — a photo-extraction failure must
+      // never block the import that actually matters. findEmbeddedPhoto()
+      // already never throws, but keep it out of the main try anyway so a
+      // change there can't accidentally regress the core flow.
+      findEmbeddedPhoto(file).then(setPhotoCandidate);
+
       const text = await extractText(file);
       const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/parse-resume', {
@@ -110,6 +121,12 @@ export default function ImportPage({ user, onCancel, onCreated }) {
         positions: picked.positions.length > 0,
       };
 
+      if (usePhoto && photoCandidate) {
+        // Crop to the guide's exact box now — the candidate so far is at
+        // whatever size it was embedded in the original document.
+        data.personalInfo.photo = await dataUrlToResizedDataUrl(photoCandidate);
+      }
+
       const title = parsed.personalInfo?.name ? `${parsed.personalInfo.name}'s Resume` : 'Imported Resume';
       const id = await create(title, data);
       onCreated(id);
@@ -168,6 +185,24 @@ export default function ImportPage({ user, onCancel, onCreated }) {
                   {parsed.personalInfo?.email || '—'} · {parsed.personalInfo?.contact || '—'}
                 </div>
               </div>
+
+              {photoCandidate && (
+                <div className="rm-item rm-photo-candidate">
+                  <div className="rm-photo-row">
+                    <img className="rm-photo-preview" src={photoCandidate} alt="Photo found in your resume" />
+                    <div>
+                      <label className="rm-import-item" style={{ padding: 0 }}>
+                        <input type="checkbox" checked={usePhoto} onChange={() => setUsePhoto((v) => !v)} />
+                        <span><strong>Use this as your passport photo</strong></span>
+                      </label>
+                      <div className="rm-hint">
+                        Found in your uploaded file. It'll be cropped to the official box — check it looks right
+                        after creating the resume, and replace it from Personal Info if not.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {PICKABLE.map(({ key, label, labelOf }) => {
                 const items = parsed[key] || [];
