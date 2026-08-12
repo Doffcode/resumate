@@ -4,8 +4,19 @@ import { supabase, isConnected, toRow, fromRow } from '../lib/supabase.js';
 
 const GUEST_STORAGE_KEY = 'resumate.resume.guest';
 
-// Caps live here, not scattered through the UI.
-export const LIMITS = { projects: 6, internships: 4, positions: 4, education: 8 };
+// Caps used to live here (6 projects / 4 internships / 4 positions / 8
+// education rows) but had no real purpose: the T&P format's actual
+// constraint is fitting the page limit, which src/validate/rules.js's
+// page-overflow check already enforces live, dynamically, based on real
+// measured content — not a guess at how many entries "usually" fit. A fixed
+// item count either blocks someone whose entries are short enough to fit
+// fine, or doesn't block someone whose entries are long enough to overflow
+// anyway. Kept as an object (not deleted) because every consumer —
+// Editor.jsx's disabled state + remaining-count hint, AiPanel.jsx's
+// projects-full check, ImportPage.jsx's cap-selection trimming — already
+// treats a missing key as "no limit" via `LIMITS[x] &&`/`??`, so leaving
+// this empty removes every cap without touching those three files.
+export const LIMITS = {};
 
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const nextId = (list) => (list.length ? Math.max(...list.map((i) => i.id)) + 1 : 1);

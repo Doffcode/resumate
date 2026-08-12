@@ -145,7 +145,7 @@ export default function Landing({ onSignIn, onGetStarted, onPrivacy, onTerms }) 
                 <li><IconCheck /><span>Every rule above, flagged inline with the exact fix</span></li>
                 <li><IconCheck /><span>The same page count in the editor and the exported PDF</span></li>
                 <li><IconCheck /><span>A photo already cropped to the T&amp;P guide's exact box</span></li>
-                <li><IconCheck /><span>Section caps enforced — 6 projects, 4 internships, no more</span></li>
+                <li><IconCheck /><span>A live warning if a page overflows or runs half-empty — no arbitrary cap on how many projects you list</span></li>
                 <li><IconCheck /><span>Nothing you can't fix yourself, before you ever export</span></li>
               </ul>
             </div>
@@ -228,8 +228,8 @@ export default function Landing({ onSignIn, onGetStarted, onPrivacy, onTerms }) 
       <section className="rm-land-shell rm-land-reveal">
         <div className="rm-land-facts">
           <div className="rm-land-fact">
-            <div className="rm-land-fact-val">6 / 4 / 4 / 8</div>
-            <div className="rm-land-fact-label">PROJECT / INTERNSHIP / POSITION / EDUCATION CAPS ENFORCED</div>
+            <div className="rm-land-fact-val">20</div>
+            <div className="rm-land-fact-label">RULES FROM THE T&amp;P GUIDE, ALL HANDLED</div>
           </div>
           <div className="rm-land-fact">
             <div className="rm-land-fact-val">1.23in × 1.35in</div>
