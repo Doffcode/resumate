@@ -12,11 +12,14 @@ export function useResumeList(userId) {
   const refresh = useCallback(async () => {
     if (!isConnected() || !userId) { setResumes([]); setLoading(false); return; }
     setLoading(true);
-    // personal_info is fetched too — just enough for the dashboard card
-    // preview (name/degree) without pulling the rest of a resume's content.
+    // Full row: the dashboard card renders a real scaled preview of the
+    // resume (src/pages/ResumeThumb.jsx) through the sealed renderer, so it
+    // needs the actual content, not just a title. These are small jsonb
+    // columns; the only heavy field is the base64 photo in personal_info,
+    // which the preview genuinely displays.
     const { data, error: err } = await supabase
       .from('resumes')
-      .select('id, title, updated_at, personal_info')
+      .select('*')
       .order('updated_at', { ascending: false });
     if (err) setError(err.message);
     else { setResumes(data || []); setError(null); }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useResumeList } from '../data/useResumeList.js';
 import { Icon, icons } from '../editor/controls.jsx';
+import ResumeThumb from './ResumeThumb.jsx';
 
 const timeAgo = (iso) => {
   const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
@@ -52,8 +53,27 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
 
       <div className="rm-dash-body">
         <div className="rm-dash-inner">
-          <h1>Your resumes</h1>
-          <p className="rm-dash-sub">Each resume keeps its own content, sections and page breaks.</p>
+          {/* The two actions live here rather than as extra tiles in the grid.
+              As tiles they were dashed boxes roughly half the height of a real
+              resume card sitting in the same row, which is what made the grid
+              look lopsided — and "create" isn't a resume, so it shouldn't be
+              shaped like one. */}
+          <div className="rm-dash-head">
+            <div className="rm-dash-headtext">
+              <h1>Your resumes</h1>
+              <p className="rm-dash-sub">Each resume keeps its own content, sections and page breaks.</p>
+            </div>
+            <div className="rm-dash-actions">
+              <button className="rm-btn rm-btn-secondary" onClick={() => onNavigate('import')}>
+                <Icon d={icons.upload} size={15} />
+                Import old resume
+              </button>
+              <button className="rm-btn rm-btn-primary" onClick={handleCreate} disabled={creating}>
+                <Icon d={icons.plus} size={15} />
+                {creating ? 'Creating…' : 'New resume'}
+              </button>
+            </div>
+          </div>
 
           {error && <div className="rm-notice is-error">{error}</div>}
 
@@ -63,67 +83,57 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
             <>
               {resumes.length === 0 && (
                 <div className="rm-dash-empty">
-                  <span className="rm-card-new-icon"><Icon d={icons.doc} size={20} /></span>
+                  <span className="rm-icon-circle"><Icon d={icons.doc} size={20} /></span>
                   <div>
                     <div className="rm-dash-empty-title">No resumes yet</div>
-                    <div className="rm-hint">Start from scratch, or import one you already have — either way, you'll be editing in a few seconds.</div>
+                    <div className="rm-hint">
+                      Start from scratch, or import one you already have — either way, you'll be
+                      editing in a few seconds. Use the buttons above to begin.
+                    </div>
                   </div>
                 </div>
               )}
               <div className="rm-grid">
               {resumes.map((r) => (
                 <div className="rm-card" key={r.id}>
-                  <button className="rm-card-open" onClick={() => onOpen(r.id)}>
-                    <div className="rm-card-thumb">
-                      <div className="rm-card-thumb-page">
-                        <div className="rm-card-thumb-name">{r.personal_info?.name || 'Untitled'}</div>
-                        <div className="rm-card-thumb-degree">{r.personal_info?.degree || 'No degree set'}</div>
-                        <div className="rm-card-thumb-rule" />
-                        <div className="rm-card-thumb-lines">
-                          <span /><span /><span />
-                        </div>
-                      </div>
-                    </div>
+                  <button className="rm-card-open" onClick={() => onOpen(r.id)} aria-label={`Open ${r.title}`}>
+                    <ResumeThumb row={r} />
                   </button>
                   <div className="rm-card-info">
-                    {renamingId === r.id ? (
-                      <input
-                        className="rm-input"
-                        autoFocus
-                        value={renameValue}
-                        onChange={(e) => setRenameValue(e.target.value)}
-                        onBlur={() => commitRename(r.id)}
-                        onKeyDown={(e) => e.key === 'Enter' && commitRename(r.id)}
-                      />
-                    ) : (
-                      <div className="rm-card-name" onClick={() => onOpen(r.id)}>{r.title}</div>
-                    )}
-                    <div className="rm-card-date">Edited {timeAgo(r.updated_at)}</div>
-                  </div>
-                  <div className="rm-card-actions">
-                    <button className="rm-iconbtn" title="Rename" onClick={() => startRename(r)}>
-                      <Icon d={icons.edit} size={13} />
-                    </button>
-                    <button
-                      className="rm-iconbtn is-danger"
-                      title="Delete"
-                      onClick={() => window.confirm(`Delete "${r.title}"? This cannot be undone.`) && remove(r.id)}
-                    >
-                      <Icon d={icons.trash} size={13} />
-                    </button>
+                    <div className="rm-card-text">
+                      {renamingId === r.id ? (
+                        <input
+                          className="rm-input"
+                          autoFocus
+                          value={renameValue}
+                          onChange={(e) => setRenameValue(e.target.value)}
+                          onBlur={() => commitRename(r.id)}
+                          onKeyDown={(e) => e.key === 'Enter' && commitRename(r.id)}
+                        />
+                      ) : (
+                        <div className="rm-card-name" onClick={() => onOpen(r.id)}>{r.title}</div>
+                      )}
+                      <div className="rm-card-date">Edited {timeAgo(r.updated_at)}</div>
+                    </div>
+                    {/* Sit in the info row rather than floating over the sheet —
+                        as overlaid boxes they read as clutter on top of the
+                        preview, and .rm-card-info was reserving 60px of dead
+                        padding for controls that were never actually there. */}
+                    <div className="rm-card-actions">
+                      <button className="rm-iconbtn" title="Rename" onClick={() => startRename(r)}>
+                        <Icon d={icons.edit} size={14} />
+                      </button>
+                      <button
+                        className="rm-iconbtn is-danger"
+                        title="Delete"
+                        onClick={() => window.confirm(`Delete "${r.title}"? This cannot be undone.`) && remove(r.id)}
+                      >
+                        <Icon d={icons.trash} size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
-
-              <button className="rm-card rm-card-new" onClick={handleCreate} disabled={creating}>
-                <span className="rm-card-new-icon"><Icon d={icons.plus} size={20} /></span>
-                {creating ? 'Creating…' : 'New resume'}
-              </button>
-
-              <button className="rm-card rm-card-new" onClick={() => onNavigate('import')}>
-                <span className="rm-card-new-icon"><Icon d={icons.upload} size={20} /></span>
-                Import old resume
-              </button>
               </div>
             </>
           )}

@@ -2,117 +2,148 @@
    style a .resume-* element — the sealed renderer owns its own CSS entirely.
    If you find yourself writing `.resume-` in this file, stop. */
 
-/* Same palette as the landing page (src/pages/landing.css): cream paper and
-   the NIT Trichy logo's own maroon, not a generic SaaS indigo. Kept as
-   separate --rm-* tokens (rather than reusing --land-*) so the workspace and
-   the marketing page can still be edited independently. */
+/* The single source of design truth for the whole app. src/pages/landing.css
+   aliases these rather than keeping its own copy, so the marketing page and
+   the workspace cannot drift apart (they did, twice, when it had a parallel
+   palette).
+   Identity: cream paper + the NIT Trichy logo's own maroon.
+   Every text/surface pair below was contrast-checked in a browser rather than
+   eyeballed — the previous palette's muted text measured 3.16:1 on white and
+   2.73:1 on the cream background, which is why body copy read as washed out.
+   Worst pair here is 4.52:1; WCAG AA wants 4.5 for text, 3.0 for UI. */
 :root {
-  --rm-bg: #f3eee3;
-  --rm-surface: #fff;
-  --rm-surface-2: #faf7f0;
-  --rm-surface-3: #efe7d7;
-  --rm-border: #ddd3bf;
-  --rm-border-strong: #c9bda3;
-  --rm-text: #241a12;
-  --rm-text-2: #6b5d4f;
-  --rm-text-3: #9c8f7d;
+  /* surfaces: one warm page tone, white cards, one tint for wells/insets */
+  --rm-bg: #f6f2ea;
+  --rm-surface: #ffffff;
+  --rm-surface-2: #faf7f1;
+  --rm-surface-3: #efe9dd;
+  --rm-border: #e2dacb;
+  --rm-border-strong: #c8bda8;
+  /* Form controls need a boundary at 3:1 to satisfy WCAG 1.4.11 (non-text
+     contrast); --rm-border-strong is a decorative divider tone and only
+     reaches 1.86:1 on white, so inputs get their own, darker token rather
+     than making every divider in the app heavy. Measured 3.18:1 here. */
+  --rm-border-input: #9c8f78;
+
+  /* text */
+  --rm-text: #1f1a15;
+  --rm-text-2: #5d5348;
+  --rm-text-3: #736855;
+
+  /* accent */
   --rm-accent: #7a1b04;
-  --rm-accent-hover: #4b1002;
-  --rm-accent-soft: #f7ece2;
-  --rm-accent-border: #e0c2a8;
+  --rm-accent-hover: #5c1403;
+  --rm-accent-soft: #f7ece4;
+  --rm-accent-border: #e2c7b2;
+
+  /* status — signal colours, deliberately not part of the brand ramp */
   --rm-green: #2f6b3a;
-  --rm-green-soft: #f0fdf4;
-  --rm-green-border: #bbf7d0;
-  --rm-amber: #b45309;
-  --rm-amber-soft: #fffbeb;
-  --rm-amber-border: #fde68a;
-  --rm-red: #dc2626;
-  --rm-red-soft: #fef2f2;
-  --rm-red-soft-hover: #fee2e2;
-  --rm-red-border: #fecaca;
-  --rm-focus-ring: rgba(122, 27, 4, .13);
-  --rm-overlay: rgba(255, 255, 255, .75);
-  --rm-photo-btn-hover: #f0dcc9;
-  --rm-r: 11px;
-  --rm-r-sm: 7px;
-  --rm-shadow-sm: 0 1px 2px rgba(36, 26, 18, .05), 0 1px 3px rgba(36, 26, 18, .06);
-  --rm-shadow-lg: 0 12px 32px rgba(36, 26, 18, .11), 0 2px 8px rgba(36, 26, 18, .07);
+  --rm-green-soft: #f1f8f2;
+  --rm-green-border: #c3ddc8;
+  --rm-amber: #9a5b12;
+  --rm-amber-soft: #fdf6ec;
+  --rm-amber-border: #e8d3ac;
+  --rm-red: #b3261e;
+  --rm-red-soft: #fdf2f1;
+  --rm-red-soft-hover: #f9e5e3;
+  --rm-red-border: #edc7c3;
+
+  --rm-focus-ring: rgba(122, 27, 4, .16);
+  --rm-overlay: rgba(255, 255, 255, .78);
+  --rm-scrim: rgba(31, 26, 21, .42);
+  --rm-photo-btn-hover: #f0e0d2;
+
+  /* type scale — replaces 14 ad-hoc sizes incl. 9.5/10.5/11.5/12.5/13.5px.
+     Half-pixel type is a big part of what made this feel imprecise. */
+  --rm-fs-xs: 11px;
+  --rm-fs-sm: 12px;
+  --rm-fs-md: 13px;
+  --rm-fs-base: 14px;
+  --rm-fs-lg: 16px;
+  --rm-fs-xl: 20px;
+  --rm-fs-2xl: 27px;
+
+  /* radius scale — replaces 13 unrelated values */
+  --rm-r-sm: 6px;
+  --rm-r: 10px;
+  --rm-r-lg: 14px;
+  --rm-r-pill: 999px;
+
+  /* 4px spacing scale — replaces ad-hoc 9/11/13/26px */
+  --rm-sp-1: 4px;
+  --rm-sp-2: 8px;
+  --rm-sp-3: 12px;
+  --rm-sp-4: 16px;
+  --rm-sp-5: 24px;
+  --rm-sp-6: 32px;
+  --rm-sp-7: 48px;
+
+  --rm-shadow-sm: 0 1px 2px rgba(31, 26, 21, .04), 0 1px 3px rgba(31, 26, 21, .05);
+  --rm-shadow-md: 0 2px 6px rgba(31, 26, 21, .06), 0 4px 12px rgba(31, 26, 21, .05);
+  --rm-shadow-lg: 0 8px 24px rgba(31, 26, 21, .10), 0 2px 6px rgba(31, 26, 21, .06);
+
   --rm-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --rm-font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
   --rm-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 /* ---------- dark mode ----------
-   Same two-layer pattern everywhere theme-aware CSS needs: the media query
-   is the default for anyone who hasn't chosen (and the very first paint,
-   before the toggle's JS runs), the attribute is the explicit override once
-   someone has (see src/lib/useTheme.js + the inline script in index.html
-   that sets it before first paint, so there's no flash). Only the app
-   chrome gets a dark palette — .resume-page (the sealed renderer, an actual
-   printable document) and .rm-card-thumb-page (a miniature of that same
-   page) are deliberately left out of every rule below and stay white in
-   both themes; a "dark mode resume" isn't a real T&P submission. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --rm-bg: #18130f;
-    --rm-surface: #26201a;
-    --rm-surface-2: #2f2821;
-    --rm-surface-3: #3b3228;
-    --rm-border: #4a3f32;
-    --rm-border-strong: #5f5140;
-    --rm-text: #f1e7d8;
-    --rm-text-2: #c3b39e;
-    --rm-text-3: #8f8170;
-    --rm-accent: #d9573a;
-    --rm-accent-hover: #ea6c4b;
-    --rm-accent-soft: #3a2419;
-    --rm-accent-border: #6b4030;
-    --rm-green: #63b177;
-    --rm-green-soft: #17261c;
-    --rm-green-border: #2f4a37;
-    --rm-amber: #c9822f; /* stays dark enough for .rm-pip's white-on-amber fill, not just brightened for text */
-    --rm-amber-soft: #2c2314;
-    --rm-amber-border: #4d3c1e;
-    --rm-red: #e8746a;
-    --rm-red-soft: #2c1a17;
-    --rm-red-soft-hover: #3a221d;
-    --rm-red-border: #5c3129;
-    --rm-focus-ring: rgba(217, 87, 58, .28);
-    --rm-overlay: rgba(28, 23, 18, .78);
-    --rm-photo-btn-hover: #4a3623;
-    --rm-shadow-sm: 0 1px 2px rgba(0, 0, 0, .25), 0 1px 3px rgba(0, 0, 0, .3);
-    --rm-shadow-lg: 0 12px 32px rgba(0, 0, 0, .4), 0 2px 8px rgba(0, 0, 0, .3);
-  }
-}
+   ONE block, not two. This used to also carry a duplicate copy under
+   `@media (prefers-color-scheme: dark)`, and the two copies had already
+   silently drifted apart (--rm-amber was #c9822f in one and #dc9a4f in the
+   other). The media-query copy was dead weight anyway: the inline script in
+   index.html resolves the theme (stored choice, else the OS preference) and
+   sets data-theme on <html> synchronously before first paint, so the
+   attribute is always present. Without JS this React app renders nothing at
+   all, so there is no scenario where the media query alone had to hold up.
+   Overriding only the values that actually change — scales, fonts, radii and
+   spacing are theme-independent and stay inherited from :root above.
+
+   Only app chrome is themed. .resume-page (the sealed renderer — a real
+   printable document) and .rm-thumb-sheet (a scaled render of that same
+   page) stay white in both themes on purpose: a dark-mode resume is not a
+   submittable T&P document. */
 :root[data-theme="dark"] {
-  --rm-bg: #18130f;
-  --rm-surface: #26201a;
-  --rm-surface-2: #2f2821;
-  --rm-surface-3: #3b3228;
-  --rm-border: #4a3f32;
-  --rm-border-strong: #5f5140;
-  --rm-text: #f1e7d8;
-  --rm-text-2: #c3b39e;
-  --rm-text-3: #8f8170;
-  --rm-accent: #d9573a;
-  --rm-accent-hover: #ea6c4b;
-  --rm-accent-soft: #3a2419;
-  --rm-accent-border: #6b4030;
-  --rm-green: #63b177;
-  --rm-green-soft: #17261c;
-  --rm-green-border: #2f4a37;
-  --rm-amber: #dc9a4f;
-  --rm-amber-soft: #2c2314;
-  --rm-amber-border: #4d3c1e;
-  --rm-red: #e8746a;
-  --rm-red-soft: #2c1a17;
-  --rm-red-soft-hover: #3a221d;
-  --rm-red-border: #5c3129;
-  --rm-focus-ring: rgba(217, 87, 58, .28);
-  --rm-overlay: rgba(28, 23, 18, .78);
-  --rm-photo-btn-hover: #4a3623;
-  --rm-shadow-sm: 0 1px 2px rgba(0, 0, 0, .25), 0 1px 3px rgba(0, 0, 0, .3);
-  --rm-shadow-lg: 0 12px 32px rgba(0, 0, 0, .4), 0 2px 8px rgba(0, 0, 0, .3);
+  --rm-bg: #16120e;
+  --rm-surface: #211c16;
+  --rm-surface-2: #292219;
+  --rm-surface-3: #332b21;
+  --rm-border: #3c3327;
+  --rm-border-strong: #574a3a;
+  --rm-border-input: #7a6a53;   /* 3.23:1 on --rm-surface */
+
+  --rm-text: #f2ece1;
+  --rm-text-2: #c4b8a6;
+  --rm-text-3: #a2957f;
+
+  /* A true maroon is invisible on a dark background (~1.5:1), so dark mode
+     has to lift the accent. Kept as a deep terracotta rather than the loud
+     orange it was, and verified at 4.97:1 on --rm-surface so it stays usable
+     for text, not just for fills. */
+  --rm-accent: #e0664a;
+  --rm-accent-hover: #ef7859;
+  --rm-accent-soft: #33211a;
+  --rm-accent-border: #6b4133;
+
+  --rm-green: #6fb883;
+  --rm-green-soft: #172219;
+  --rm-green-border: #31462f;
+  --rm-amber: #d69a4c;
+  --rm-amber-soft: #292014;
+  --rm-amber-border: #4a3a20;
+  --rm-red: #ef8074;
+  --rm-red-soft: #2b1a17;
+  --rm-red-soft-hover: #3a221e;
+  --rm-red-border: #5e332c;
+
+  --rm-focus-ring: rgba(224, 102, 74, .3);
+  --rm-overlay: rgba(22, 18, 14, .8);
+  --rm-scrim: rgba(0, 0, 0, .58);
+  --rm-photo-btn-hover: #45301f;
+
+  --rm-shadow-sm: 0 1px 2px rgba(0, 0, 0, .3), 0 1px 3px rgba(0, 0, 0, .32);
+  --rm-shadow-md: 0 2px 6px rgba(0, 0, 0, .36), 0 4px 12px rgba(0, 0, 0, .3);
+  --rm-shadow-lg: 0 8px 24px rgba(0, 0, 0, .45), 0 2px 6px rgba(0, 0, 0, .34);
 }
 
 html, body, #root { height: 100%; }
@@ -120,13 +151,23 @@ body {
   font-family: var(--rm-font);
   background: var(--rm-bg);
   color: var(--rm-text);
-  font-size: 14px;
+  font-size: var(--rm-fs-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
 }
-.rm-app button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
-.rm-app input, .rm-app textarea { font: inherit; color: inherit; }
+/* Global, NOT scoped to .rm-app — this was the single worst visual bug in the
+   app. The reset used to be `.rm-app button {...}`, but `.rm-app` is only used
+   by EditorPage: Dashboard/Settings/Privacy/Terms/Admin/Import all use
+   `.rm-dash`, and AuthScreen uses `.rm-auth`. Every button on all of those
+   pages therefore fell back to the browser's default control chrome —
+   measured as `background: rgb(239,239,239)` + `border: 1.58px outset` —
+   which is what made the footer links, the auth "Back"/"Sign in" buttons and
+   the card rename/delete controls render as grey/white boxes. It half-blended
+   into cream in light mode and became glaring boxes in dark mode.
+   Safe globally: every <button> in src/ carries its own styling class. */
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
 
 .rm-app { display: flex; flex-direction: column; height: 100vh; }
 
@@ -139,22 +180,22 @@ body {
   border-bottom: 1px solid var(--rm-border);
   z-index: 20;
 }
-.rm-brand { display: flex; align-items: center; gap: 8px; font-weight: 650; font-size: 15px; letter-spacing: -.01em; }
+.rm-brand { display: flex; align-items: center; gap: 8px; font-weight: 650; font-size: var(--rm-fs-lg); letter-spacing: -.01em; }
 .rm-mark {
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--rm-accent);
   display: grid; place-items: center; color: var(--rm-accent-soft);
-  font-family: var(--rm-font-display); font-style: italic; font-weight: 600; font-size: 13px;
+  font-family: var(--rm-font-display); font-style: italic; font-weight: 600; font-size: var(--rm-fs-md);
 }
 .rm-sep { width: 1px; height: 20px; background: var(--rm-border); }
-.rm-saved { display: flex; align-items: center; gap: 6px; color: var(--rm-text-3); font-size: 12.5px; }
+.rm-saved { display: flex; align-items: center; gap: 6px; color: var(--rm-text-3); font-size: var(--rm-fs-sm); }
 .rm-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rm-green); }
 .rm-spacer { flex: 1; }
 
 .rm-btn {
   display: inline-flex; align-items: center; gap: 7px;
   height: 32px; padding: 0 12px; border-radius: var(--rm-r-sm);
-  font-size: 13.5px; font-weight: 550; white-space: nowrap;
+  font-size: var(--rm-fs-md); font-weight: 550; white-space: nowrap;
   transition: background .12s, border-color .12s;
 }
 .rm-btn-ghost { color: var(--rm-text-2); }
@@ -178,18 +219,18 @@ body {
   padding: 12px 14px 10px; border-bottom: 1px solid var(--rm-border);
   display: flex; align-items: center; justify-content: space-between;
 }
-.rm-editor-head h2 { font-family: var(--rm-font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--rm-text-3); }
+.rm-editor-head h2 { font-family: var(--rm-font-mono); font-size: var(--rm-fs-xs); letter-spacing: .06em; text-transform: uppercase; color: var(--rm-text-3); }
 .rm-editor-scroll { flex: 1; overflow-y: auto; padding: 8px 10px 60px; }
 .rm-editor-scroll::-webkit-scrollbar { width: 10px; }
-.rm-editor-scroll::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: 99px; border: 3px solid var(--rm-surface); }
+.rm-editor-scroll::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: var(--rm-r-pill); border: 3px solid var(--rm-surface); }
 
 .rm-section { border: 1px solid var(--rm-border); border-radius: var(--rm-r); margin-bottom: 7px; }
 .rm-section.is-open { box-shadow: var(--rm-shadow-sm); border-color: var(--rm-border-strong); }
 .rm-section.is-off { opacity: .55; }
 .rm-sec-head { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: var(--rm-r); cursor: pointer; user-select: none; }
 .rm-sec-head:hover { background: var(--rm-surface-2); }
-.rm-sec-name { font-weight: 550; font-size: 13.5px; flex: 1; text-align: left; }
-.rm-count { font-size: 11.5px; color: var(--rm-text-3); background: var(--rm-surface-3); padding: 1px 6px; border-radius: 20px; font-weight: 550; }
+.rm-sec-name { font-weight: 550; font-size: var(--rm-fs-md); flex: 1; text-align: left; }
+.rm-count { font-size: var(--rm-fs-sm); color: var(--rm-text-3); background: var(--rm-surface-3); padding: 1px 6px; border-radius: var(--rm-r-pill); font-weight: 550; }
 .rm-chevron { color: var(--rm-text-3); transition: transform .16s; }
 .rm-section.is-open .rm-chevron { transform: rotate(90deg); }
 .rm-sec-body { padding: 2px 11px 12px; border-top: 1px solid var(--rm-border); }
@@ -197,32 +238,32 @@ body {
 /* switch */
 .rm-switch { position: relative; width: 30px; height: 18px; flex: 0 0 auto; display: inline-block; }
 .rm-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 2; }
-.rm-track { position: absolute; inset: 0; background: var(--rm-border-strong); border-radius: 99px; transition: background .16s; pointer-events: none; }
+.rm-track { position: absolute; inset: 0; background: var(--rm-border-strong); border-radius: var(--rm-r-pill); transition: background .16s; pointer-events: none; }
 .rm-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .16s; pointer-events: none; }
 .rm-switch input:checked ~ .rm-track { background: var(--rm-accent); }
 .rm-switch input:checked ~ .rm-thumb { transform: translateX(12px); }
 
 /* fields */
 .rm-field { margin-top: 11px; }
-.rm-field label { display: block; font-size: 12px; font-weight: 550; color: var(--rm-text-2); margin-bottom: 5px; }
+.rm-field label { display: block; font-size: var(--rm-fs-sm); font-weight: 550; color: var(--rm-text-2); margin-bottom: 5px; }
 .rm-input, .rm-textarea {
   width: 100%; padding: 7px 10px;
   background: var(--rm-surface);
-  border: 1px solid var(--rm-border-strong); border-radius: var(--rm-r-sm);
-  font-size: 13.5px; transition: border-color .12s, box-shadow .12s;
+  border: 1px solid var(--rm-border-input); border-radius: var(--rm-r-sm);
+  font-size: var(--rm-fs-md); transition: border-color .12s, box-shadow .12s;
 }
 .rm-input:focus, .rm-textarea:focus { outline: none; border-color: var(--rm-accent); box-shadow: 0 0 0 3px var(--rm-focus-ring); }
 .rm-textarea { resize: vertical; min-height: 66px; line-height: 1.5; }
 .rm-row { display: flex; gap: 9px; }
 .rm-row > * { flex: 1; min-width: 0; }
-.rm-hint { font-size: 11.5px; color: var(--rm-text-3); margin-top: 6px; }
+.rm-hint { font-size: var(--rm-fs-sm); color: var(--rm-text-3); margin-top: 6px; }
 
 /* item card */
 .rm-item { border: 1px solid var(--rm-border); border-radius: var(--rm-r-sm); background: var(--rm-surface-2); padding: 9px 10px; margin-top: 9px; }
 .rm-item:hover { border-color: var(--rm-border-strong); }
 .rm-item-head { display: flex; align-items: center; gap: 6px; }
-.rm-item-title { font-weight: 550; font-size: 13px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.rm-iconbtn { width: 24px; height: 24px; border-radius: 5px; display: grid; place-items: center; color: var(--rm-text-3); transition: background .12s, color .12s; }
+.rm-item-title { font-weight: 550; font-size: var(--rm-fs-md); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rm-iconbtn { width: 24px; height: 24px; border-radius: var(--rm-r-sm); display: grid; place-items: center; color: var(--rm-text-3); transition: background .12s, color .12s; }
 .rm-iconbtn:hover:not(:disabled) { background: var(--rm-surface-3); color: var(--rm-text); }
 .rm-iconbtn:disabled { opacity: .3; cursor: not-allowed; }
 .rm-iconbtn.is-danger:hover { background: var(--rm-red-soft); color: var(--rm-red); }
@@ -234,7 +275,7 @@ body {
 .rm-breaker { display: flex; align-items: center; gap: 8px; margin-top: 9px; height: 20px; cursor: pointer; opacity: .35; transition: opacity .14s; width: 100%; }
 .rm-breaker:hover, .rm-breaker.is-on { opacity: 1; }
 .rm-breaker .rm-line { flex: 1; height: 1px; background: var(--rm-border-strong); }
-.rm-breaker .rm-tag { font-size: 11px; color: var(--rm-text-3); font-weight: 550; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--rm-border-strong); background: var(--rm-surface); white-space: nowrap; }
+.rm-breaker .rm-tag { font-size: var(--rm-fs-xs); color: var(--rm-text-3); font-weight: 550; padding: 2px 8px; border-radius: var(--rm-r-pill); border: 1px solid var(--rm-border-strong); background: var(--rm-surface); white-space: nowrap; }
 .rm-breaker:hover .rm-tag, .rm-breaker.is-on .rm-tag { border-color: var(--rm-accent-border); color: var(--rm-accent); background: var(--rm-accent-soft); }
 .rm-breaker.is-on .rm-line { background: var(--rm-accent-border); }
 
@@ -242,7 +283,7 @@ body {
   display: flex; align-items: center; justify-content: center; gap: 6px;
   width: 100%; margin-top: 10px; padding: 8px;
   border: 1px dashed var(--rm-border-strong); border-radius: var(--rm-r-sm);
-  color: var(--rm-text-2); font-size: 13px; font-weight: 550; transition: all .12s;
+  color: var(--rm-text-2); font-size: var(--rm-fs-md); font-weight: 550; transition: all .12s;
 }
 .rm-add:hover:not(:disabled) { border-color: var(--rm-accent); color: var(--rm-accent); background: var(--rm-accent-soft); }
 .rm-add:disabled { opacity: .5; cursor: not-allowed; }
@@ -254,21 +295,21 @@ body {
   padding: 0 14px; border-bottom: 1px solid var(--rm-border); background: var(--rm-overlay);
 }
 .rm-pill { display: flex; align-items: center; gap: 2px; background: var(--rm-surface); border: 1px solid var(--rm-border-strong); border-radius: var(--rm-r-sm); padding: 2px; }
-.rm-pill button { padding: 3px 9px; border-radius: 5px; font-size: 12.5px; font-weight: 550; color: var(--rm-text-2); }
+.rm-pill button { padding: 3px 9px; border-radius: var(--rm-r-sm); font-size: var(--rm-fs-sm); font-weight: 550; color: var(--rm-text-2); }
 .rm-pill button:hover { background: var(--rm-surface-3); color: var(--rm-text); }
-.rm-zoomval { min-width: 46px; text-align: center; color: var(--rm-text); font-size: 12.5px; font-weight: 550; }
-.rm-pagelabel { font-family: var(--rm-font-mono); font-size: 11.5px; color: var(--rm-text-3); }
+.rm-zoomval { min-width: 46px; text-align: center; color: var(--rm-text); font-size: var(--rm-fs-sm); font-weight: 550; }
+.rm-pagelabel { font-family: var(--rm-font-mono); font-size: var(--rm-fs-sm); color: var(--rm-text-3); }
 
 .rm-warn {
   display: flex; align-items: center; gap: 8px;
   background: var(--rm-amber-soft); border: 1px solid var(--rm-amber-border);
   color: var(--rm-amber); border-radius: var(--rm-r-sm);
-  padding: 5px 10px; font-size: 12.5px; font-weight: 550;
+  padding: 5px 10px; font-size: var(--rm-fs-sm); font-weight: 550;
 }
 
 .rm-canvas { flex: 1; overflow: auto; padding: 26px 0 60px; }
 .rm-canvas::-webkit-scrollbar { width: 12px; height: 12px; }
-.rm-canvas::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: 99px; border: 3px solid var(--rm-bg); }
+.rm-canvas::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: var(--rm-r-pill); border: 3px solid var(--rm-bg); }
 .rm-pages { display: flex; flex-direction: column; align-items: center; gap: 22px; }
 
 /* The A4 page itself is styled entirely by the sealed renderer. This only
@@ -310,19 +351,19 @@ body {
   height: 52px; flex: 0 0 52px; display: flex; align-items: center; gap: 9px;
   padding: 0 14px; border-bottom: 1px solid var(--rm-border); color: var(--rm-accent);
 }
-.rm-drawer-head h3 { font-size: 14px; font-weight: 650; flex: 1; color: var(--rm-text); }
-.rm-badge { font-size: 11px; font-weight: 650; padding: 2px 8px; border-radius: 20px; border: 1px solid; }
+.rm-drawer-head h3 { font-size: var(--rm-fs-base); font-weight: 650; flex: 1; color: var(--rm-text); }
+.rm-badge { font-size: var(--rm-fs-xs); font-weight: 650; padding: 2px 8px; border-radius: var(--rm-r-pill); border: 1px solid; }
 .rm-badge.is-ok { color: var(--rm-green); background: var(--rm-green-soft); border-color: var(--rm-green-border); }
 .rm-badge.is-fail { color: var(--rm-amber); background: var(--rm-amber-soft); border-color: var(--rm-amber-border); }
 .rm-drawer-body { flex: 1; overflow-y: auto; padding: 14px; }
 .rm-drawer-body::-webkit-scrollbar { width: 10px; }
-.rm-drawer-body::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: 99px; border: 3px solid var(--rm-surface); }
-.rm-drawer-intro { font-size: 12.5px; color: var(--rm-text-2); margin-bottom: 12px; }
+.rm-drawer-body::-webkit-scrollbar-thumb { background: var(--rm-border-strong); border-radius: var(--rm-r-pill); border: 3px solid var(--rm-surface); }
+.rm-drawer-intro { font-size: var(--rm-fs-sm); color: var(--rm-text-2); margin-bottom: 12px; }
 .rm-fixall { width: 100%; justify-content: center; margin-bottom: 16px; }
 
 .rm-check-group { margin-bottom: 18px; }
 .rm-check-grouphead {
-  font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .04em;
+  font-size: var(--rm-fs-xs); font-weight: 650; text-transform: uppercase; letter-spacing: .04em;
   color: var(--rm-text-3); margin-bottom: 8px; display: flex; gap: 6px;
 }
 .rm-check-grouphead span { color: var(--rm-text-3); font-weight: 550; }
@@ -335,15 +376,15 @@ body {
 .rm-check-guaranteed .rm-check-mark { background: var(--rm-accent-border); }
 .rm-check-advisory .rm-check-mark { background: var(--rm-text-3); }
 .rm-check-body { min-width: 0; flex: 1; }
-.rm-check-title { font-size: 13px; font-weight: 600; display: flex; align-items: baseline; gap: 7px; }
-.rm-check-rule { font-family: var(--rm-font-mono); font-size: 10px; color: var(--rm-text-3); flex: 0 0 auto; }
-.rm-check-detail { font-size: 12px; color: var(--rm-text-2); margin-top: 2px; line-height: 1.45; }
-.rm-check-fix { height: 26px; font-size: 12px; margin-top: 8px; }
+.rm-check-title { font-size: var(--rm-fs-md); font-weight: 600; display: flex; align-items: baseline; gap: 7px; }
+.rm-check-rule { font-family: var(--rm-font-mono); font-size: var(--rm-fs-xs); color: var(--rm-text-3); flex: 0 0 auto; }
+.rm-check-detail { font-size: var(--rm-fs-sm); color: var(--rm-text-2); margin-top: 2px; line-height: 1.45; }
+.rm-check-fix { height: 26px; font-size: var(--rm-fs-sm); margin-top: 8px; }
 
 @media print { .rm-drawer { display: none !important; } }
 .rm-pip {
-  min-width: 17px; height: 17px; padding: 0 5px; border-radius: 20px;
-  background: var(--rm-amber); color: #fff; font-size: 11px; font-weight: 700;
+  min-width: 17px; height: 17px; padding: 0 5px; border-radius: var(--rm-r-pill);
+  background: var(--rm-amber); color: #fff; font-size: var(--rm-fs-xs); font-weight: 700;
   display: inline-grid; place-items: center;
 }
 .rm-has-issues { color: var(--rm-amber); }
@@ -352,38 +393,38 @@ body {
 .rm-badge.is-beta { color: var(--rm-accent); background: var(--rm-accent-soft); border-color: var(--rm-accent-border); }
 .rm-notice {
   background: var(--rm-amber-soft); border: 1px solid var(--rm-amber-border); color: var(--rm-amber);
-  border-radius: var(--rm-r-sm); padding: 9px 11px; font-size: 12.5px; margin-bottom: 12px; line-height: 1.45;
+  border-radius: var(--rm-r-sm); padding: 9px 11px; font-size: var(--rm-fs-sm); margin-bottom: 12px; line-height: 1.45;
 }
 .rm-notice.is-error { background: var(--rm-red-soft); border-color: var(--rm-red-border); color: var(--rm-red); }
 .rm-jd { border: 1px solid var(--rm-border-strong); border-radius: var(--rm-r); padding: 10px; background: var(--rm-surface-2); }
-.rm-jd label { display: block; font-size: 12px; font-weight: 550; color: var(--rm-text-2); margin-bottom: 6px; }
-.rm-jd .rm-textarea { background: var(--rm-surface); min-height: 76px; font-size: 13px; }
+.rm-jd label { display: block; font-size: var(--rm-fs-sm); font-weight: 550; color: var(--rm-text-2); margin-bottom: 6px; }
+.rm-jd .rm-textarea { background: var(--rm-surface); min-height: 76px; font-size: var(--rm-fs-md); }
 
 .rm-sugg { border: 1px solid var(--rm-border); border-radius: var(--rm-r); background: var(--rm-surface); box-shadow: var(--rm-shadow-sm); margin-top: 11px; overflow: hidden; }
 .rm-sugg-head { display: flex; align-items: center; gap: 7px; padding: 9px 11px; border-bottom: 1px solid var(--rm-border); background: var(--rm-surface-2); }
-.rm-sugg-label { font-size: 12px; font-weight: 650; color: var(--rm-text-2); flex: 1; min-width: 0; }
-.rm-tag-ai { font-size: 10.5px; font-weight: 650; padding: 1px 6px; border-radius: 20px; background: var(--rm-accent-soft); color: var(--rm-accent); border: 1px solid var(--rm-accent-border); }
+.rm-sugg-label { font-size: var(--rm-fs-sm); font-weight: 650; color: var(--rm-text-2); flex: 1; min-width: 0; }
+.rm-tag-ai { font-size: var(--rm-fs-xs); font-weight: 650; padding: 1px 6px; border-radius: var(--rm-r-pill); background: var(--rm-accent-soft); color: var(--rm-accent); border: 1px solid var(--rm-accent-border); }
 .rm-tag-ai.is-gap { background: var(--rm-amber-soft); color: var(--rm-amber); border-color: var(--rm-amber-border); }
 .rm-sugg-body { padding: 11px; }
-.rm-sugg-title { font-weight: 650; font-size: 13px; margin-bottom: 4px; }
-.rm-sugg-body p { font-size: 12.5px; color: var(--rm-text-2); line-height: 1.55; }
+.rm-sugg-title { font-weight: 650; font-size: var(--rm-fs-md); margin-bottom: 4px; }
+.rm-sugg-body p { font-size: var(--rm-fs-sm); color: var(--rm-text-2); line-height: 1.55; }
 .rm-gap-covers { margin-top: 6px; font-style: italic; }
 .rm-sugg-actions { display: flex; gap: 7px; padding: 0 11px 11px; }
-.rm-sugg-actions .rm-btn { height: 28px; font-size: 12.5px; flex: 1; justify-content: center; }
+.rm-sugg-actions .rm-btn { height: 28px; font-size: var(--rm-fs-sm); flex: 1; justify-content: center; }
 .rm-gap-row { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--rm-border); }
 .rm-gap-row:last-child { border-bottom: none; }
 .rm-gap-actions { display: flex; gap: 6px; flex: 0 0 auto; }
-.rm-gap-actions .rm-btn { height: 26px; font-size: 12px; }
+.rm-gap-actions .rm-btn { height: 26px; font-size: var(--rm-fs-sm); }
 .rm-warn-inline {
   display: flex; gap: 7px; align-items: flex-start;
   background: var(--rm-amber-soft); border: 1px solid var(--rm-amber-border); color: var(--rm-amber);
-  border-radius: var(--rm-r-sm); padding: 8px 10px; margin: 0 11px 11px; font-size: 11.5px; line-height: 1.5;
+  border-radius: var(--rm-r-sm); padding: 8px 10px; margin: 0 11px 11px; font-size: var(--rm-fs-sm); line-height: 1.5;
 }
 
 .rm-modal-backdrop { position: fixed; inset: 0; background: rgba(36,26,18,.45); display: grid; place-items: center; z-index: 100; }
 .rm-modal { background: var(--rm-surface); border-radius: var(--rm-r); padding: 20px; width: 400px; max-width: 90vw; box-shadow: var(--rm-shadow-lg); }
-.rm-modal h4 { font-size: 15px; font-weight: 650; margin-bottom: 8px; }
-.rm-modal p { font-size: 13px; color: var(--rm-text-2); line-height: 1.55; }
+.rm-modal h4 { font-size: var(--rm-fs-lg); font-weight: 650; margin-bottom: 8px; }
+.rm-modal p { font-size: var(--rm-fs-md); color: var(--rm-text-2); line-height: 1.55; }
 .rm-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
 
 @media print { .rm-modal-backdrop { display: none !important; } }
@@ -394,24 +435,26 @@ body {
 }
 .rm-auth-card {
   width: 380px; max-width: 90vw; background: var(--rm-surface);
-  border: 1px solid var(--rm-border); border-radius: 10px; padding: 28px;
+  border: 1px solid var(--rm-border); border-radius: var(--rm-r); padding: 28px;
   box-shadow: var(--rm-shadow-lg);
 }
-.rm-auth-card h1 { font-size: 20px; margin-bottom: 16px; text-align: center; }
+.rm-auth-card h1 { font-size: var(--rm-fs-xl); margin-bottom: 16px; text-align: center; }
 .rm-auth-submit { width: 100%; justify-content: center; margin-top: 6px; height: 36px; }
-.rm-auth-switch { width: 100%; justify-content: center; margin-top: 12px; font-size: 12.5px; }
-.rm-notice.is-ok { background: var(--rm-green-soft); border: 1px solid var(--rm-green-border); color: var(--rm-green); border-radius: var(--rm-r-sm); padding: 9px 11px; font-size: 12.5px; margin-top: 10px; }
+.rm-auth-switch { width: 100%; justify-content: center; margin-top: 12px; font-size: var(--rm-fs-sm); }
+.rm-notice.is-ok { background: var(--rm-green-soft); border: 1px solid var(--rm-green-border); color: var(--rm-green); border-radius: var(--rm-r-sm); padding: 9px 11px; font-size: var(--rm-fs-sm); margin-top: 10px; }
 
 /* ---------- dashboard ---------- */
 .rm-dash { height: 100vh; display: flex; flex-direction: column; background: var(--rm-bg); }
 .rm-dash-email {
-  font-size: 12.5px; color: var(--rm-text-3); margin-right: 4px;
+  font-size: var(--rm-fs-sm); color: var(--rm-text-3); margin-right: 4px;
   min-width: 0; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .rm-dash-body { flex: 1; overflow-y: auto; }
 .rm-dash-inner { max-width: 940px; margin: 0 auto; padding: 44px 24px 80px; }
-.rm-dash-inner h1 { font-size: 28px; margin-bottom: 6px; }
-.rm-dash-sub { color: var(--rm-text-2); margin-bottom: 26px; font-size: 14px; }
+.rm-dash-inner h1 { font-size: var(--rm-fs-2xl); margin-bottom: var(--rm-sp-1); }
+.rm-dash-sub { color: var(--rm-text-2); margin-bottom: var(--rm-sp-5); font-size: var(--rm-fs-base); }
+/* Inside the header row the spacing is owned by .rm-dash-head. */
+.rm-dash-headtext .rm-dash-sub { margin-bottom: 0; }
 
 /* Every page heading (dashboard, settings, admin, import, legal, auth) uses
    the same restrained display face the landing page's headline uses —
@@ -425,75 +468,86 @@ body {
   border: 1px solid var(--rm-border); border-radius: var(--rm-r);
   background: var(--rm-surface-2); padding: 18px 20px; margin-bottom: 20px;
 }
-.rm-dash-empty .rm-card-new-icon { flex: 0 0 auto; }
-.rm-dash-empty-title { font-family: var(--rm-font-display); font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+.rm-dash-empty-title { font-family: var(--rm-font-display); font-weight: 600; font-size: var(--rm-fs-lg); margin-bottom: 3px; }
 
-.rm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 15px; }
+.rm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--rm-sp-4); }
 .rm-card {
-  background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 14px;
+  background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: var(--rm-r-lg);
   overflow: hidden; box-shadow: var(--rm-shadow-sm); position: relative;
-  transition: box-shadow .14s, transform .14s, border-color .14s;
+  display: flex; flex-direction: column;
+  transition: box-shadow .16s, transform .16s, border-color .16s;
 }
-.rm-card:hover { box-shadow: var(--rm-shadow-lg); transform: translateY(-2px); border-color: var(--rm-border-strong); }
-.rm-card-open { display: block; width: 100%; }
-.rm-card-thumb {
-  height: 130px; background: var(--rm-surface-3);
-  display: flex; align-items: center; justify-content: center;
-  border-bottom: 1px solid var(--rm-border); padding: 14px;
-}
-/* A tiny, non-interactive echo of the actual resume page (see
-   src/resume/resume.css) — same idea as the landing page's mock, scaled
-   down: a white sheet with a name, a rule, a few content lines. Just enough
-   for a card to look like a specific resume instead of an empty box. */
-.rm-card-thumb-page {
-  width: 100%; height: 100%; background: #fff;
-  border: 1px solid var(--rm-border); border-radius: 6px;
-  box-shadow: var(--rm-shadow-sm);
-  padding: 10px 12px; overflow: hidden;
-}
-/* Fixed, not theme-aware, on purpose: the page behind this text is always
-   #fff (see above), in both themes — using --rm-text here was the actual
-   bug that made dark mode look broken, not just "off". Dark mode's --rm-text
-   is a light cream meant for light-on-dark text; put on this permanently
-   white page it went nearly invisible. */
-.rm-card-thumb-name {
-  font-family: var(--rm-font-display); font-weight: 600; font-size: 12.5px;
-  color: #241a12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.rm-card-thumb-degree {
-  font-size: 9.5px; color: #74665a; margin-top: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.rm-card-thumb-rule { height: 1.5px; background: var(--rm-accent); margin: 7px 0 8px; opacity: .8; }
-.rm-card-thumb-lines { display: flex; flex-direction: column; gap: 4px; }
-.rm-card-thumb-lines span { display: block; height: 4px; border-radius: 1px; background: #eee6d8; }
-.rm-card-thumb-lines span:nth-child(1) { width: 88%; }
-.rm-card-thumb-lines span:nth-child(2) { width: 72%; }
-.rm-card-thumb-lines span:nth-child(3) { width: 80%; }
-.rm-card-info { padding: 11px 13px; padding-right: 60px; }
-.rm-card-name { font-weight: 600; font-size: 14px; letter-spacing: -.01em; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rm-card-date { font-size: 12px; color: var(--rm-text-3); margin-top: 2px; }
-.rm-card-actions { position: absolute; top: 9px; right: 9px; display: flex; gap: 2px; background: var(--rm-surface); border-radius: 7px; box-shadow: var(--rm-shadow-sm); border: 1px solid var(--rm-border); }
-.rm-card-new {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px;
-  min-height: 178px; border: 1.5px dashed var(--rm-border-strong); background: none;
-  color: var(--rm-text-2); font-weight: 550; box-shadow: none; width: 100%;
-  border-radius: 14px;
-}
-.rm-card-new:hover:not(:disabled) { border-color: var(--rm-accent); color: var(--rm-accent); background: var(--rm-accent-soft); transform: translateY(-2px); }
-.rm-card-new:disabled { opacity: .6; cursor: not-allowed; }
-/* A soft circle behind the plus/upload icon so these two dashed cards carry
-   as much visual weight as the content-rich resume cards next to them,
-   rather than reading as a thinner, emptier afterthought. */
-.rm-card-new-icon {
-  width: 44px; height: 44px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--rm-surface-2); color: var(--rm-text-2);
-  transition: background .14s, color .14s;
-}
-.rm-card-new:hover:not(:disabled) .rm-card-new-icon { background: var(--rm-accent-soft); color: var(--rm-accent); }
+.rm-card:hover { box-shadow: var(--rm-shadow-md); transform: translateY(-2px); border-color: var(--rm-border-strong); }
+.rm-card-open { display: block; width: 100%; padding: 0; }
 
-.rm-page-loading { flex: 1; display: grid; place-items: center; color: var(--rm-text-2); font-size: 14px; gap: 12px; height: 100vh; flex-direction: column; }
+/* ---------- real resume preview (src/pages/ResumeThumb.jsx) ----------
+   A genuine scaled render of the sealed renderer, not a mock-up: real logo,
+   real photo, real content. The frame is the container the scale is measured
+   against, and it crops to the top of the sheet — the header band (logo,
+   name, degree, photo) is the part that actually distinguishes one resume
+   from another at this size. */
+.rm-thumb-frame {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #fff;              /* the sheet is white in both themes */
+  border-bottom: 1px solid var(--rm-border);
+  position: relative;
+}
+/* The crop lands mid-document by design (the top of the sheet is the part
+   that identifies a resume). This fades the cut so it reads as "continues
+   below" rather than as a hard slice through a table row. */
+.rm-thumb-frame::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 34%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+  pointer-events: none;
+}
+.rm-thumb-sheet {
+  /* transform: scale(...) is set inline from a measured width — see the
+     comment in ResumeThumb.jsx for why this can't be done in CSS alone. */
+  transform-origin: top left;
+  width: 793.7px;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity .12s;
+}
+/* The renderer's own page shadow/margins are for a standalone page on a
+   canvas; inside a card they'd show as a grey seam. */
+.rm-thumb-sheet .resume-page { box-shadow: none; margin-bottom: 0; }
+
+.rm-card-info {
+  padding: var(--rm-sp-3);
+  display: flex; align-items: center; gap: var(--rm-sp-2);
+}
+.rm-card-text { min-width: 0; flex: 1; }
+.rm-card-name { font-weight: 600; font-size: var(--rm-fs-md); letter-spacing: -.01em; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rm-card-date { font-size: var(--rm-fs-sm); color: var(--rm-text-3); margin-top: 2px; }
+/* Quiet until the card is hovered/focused, so six cards in a grid read as
+   six resumes rather than twelve buttons. Always visible on touch, where
+   there is no hover to reveal them. */
+.rm-card-actions { display: flex; gap: 2px; flex: 0 0 auto; opacity: 0; transition: opacity .14s; }
+.rm-card:hover .rm-card-actions,
+.rm-card:focus-within .rm-card-actions { opacity: 1; }
+@media (hover: none) { .rm-card-actions { opacity: 1; } }
+
+/* Page header: title on the left, primary actions on the right. */
+.rm-dash-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: var(--rm-sp-4); margin-bottom: var(--rm-sp-5); flex-wrap: wrap;
+}
+.rm-dash-headtext { min-width: 0; }
+.rm-dash-actions { display: flex; gap: var(--rm-sp-2); flex: 0 0 auto; }
+.rm-dash-actions .rm-btn { height: 36px; }
+
+/* Soft circle behind a standalone icon. (Was .rm-card-new-icon, back when
+   "New resume"/"Import" were dashed grid tiles; those moved into the page
+   header, so the tile styles are gone and only this survives.) */
+.rm-icon-circle {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; flex: 0 0 auto;
+  background: var(--rm-surface-3); color: var(--rm-text-2);
+}
+
+.rm-page-loading { flex: 1; display: grid; place-items: center; color: var(--rm-text-2); font-size: var(--rm-fs-base); gap: 12px; height: 100vh; flex-direction: column; }
 
 /* ---------- settings / legal / danger zone ---------- */
 .rm-btn-danger { background: var(--rm-red-soft); color: var(--rm-red); border: 1px solid var(--rm-red-border); }
@@ -502,18 +556,18 @@ body {
   border: 1px solid var(--rm-red-border); border-radius: var(--rm-r); background: var(--rm-red-soft);
   padding: 16px; margin-top: 18px;
 }
-.rm-danger-zone h2 { font-size: 14px; font-weight: 650; color: var(--rm-red); margin-bottom: 6px; }
-.rm-danger-zone p { font-size: 13px; color: var(--rm-text-2); line-height: 1.5; margin-bottom: 12px; }
-.rm-danger-confirm p { font-size: 13px; color: var(--rm-text); margin-bottom: 10px; }
+.rm-danger-zone h2 { font-size: var(--rm-fs-base); font-weight: 650; color: var(--rm-red); margin-bottom: 6px; }
+.rm-danger-zone p { font-size: var(--rm-fs-md); color: var(--rm-text-2); line-height: 1.5; margin-bottom: 12px; }
+.rm-danger-confirm p { font-size: var(--rm-fs-md); color: var(--rm-text); margin-bottom: 10px; }
 
-.rm-legal h1 { font-size: 24px; margin-bottom: 6px; }
-.rm-legal h2 { font-size: 14px; font-weight: 650; margin-top: 20px; margin-bottom: 6px; }
-.rm-legal p { font-size: 13.5px; color: var(--rm-text-2); line-height: 1.6; }
+.rm-legal h1 { font-size: var(--rm-fs-2xl); margin-bottom: 6px; }
+.rm-legal h2 { font-size: var(--rm-fs-base); font-weight: 650; margin-top: 20px; margin-bottom: 6px; }
+.rm-legal p { font-size: var(--rm-fs-md); color: var(--rm-text-2); line-height: 1.6; }
 
 .rm-dash-footer { display: flex; align-items: center; gap: 8px; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rm-border); }
-.rm-link { font-size: 12.5px; color: var(--rm-text-3); text-decoration: underline; text-underline-offset: 2px; }
+.rm-link { font-size: var(--rm-fs-sm); color: var(--rm-text-3); text-decoration: underline; text-underline-offset: 2px; }
 .rm-link:hover { color: var(--rm-text-2); }
-.rm-dot-sep { color: var(--rm-border-strong); font-size: 12px; }
+.rm-dot-sep { color: var(--rm-border-strong); font-size: var(--rm-fs-sm); }
 
 /* ---------- mobile (<=768px) ---------- */
 .rm-drawer-toggle { display: none; }
@@ -544,8 +598,8 @@ body {
 
   .rm-topbar { padding: 0 8px; gap: 4px; overflow-x: auto; }
   .rm-topbar .rm-saved { display: none; }
-  .rm-topbar .rm-btn { padding: 0 8px; font-size: 12px; gap: 4px; flex-shrink: 0; }
-  .rm-topbar .rm-brand { font-size: 13px; flex-shrink: 0; }
+  .rm-topbar .rm-btn { padding: 0 8px; font-size: var(--rm-fs-sm); gap: 4px; flex-shrink: 0; }
+  .rm-topbar .rm-brand { font-size: var(--rm-fs-md); flex-shrink: 0; }
 
   /* Format Check / AI panel: 380px fixed side panel becomes a full-screen
      overlay instead of squeezing (or clipping) the preview to nothing. It's
@@ -553,8 +607,16 @@ body {
      needed here — the same mount/unmount that drives it on desktop. */
   .rm-drawer { position: fixed; top: 52px; left: 0; right: 0; bottom: 0; z-index: 25; width: auto; }
 
-  .rm-dash-inner { padding: 24px 16px 60px; }
-  .rm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .rm-dash-inner { padding: var(--rm-sp-5) var(--rm-sp-4) 60px; }
+  /* 200px, not the old 150px: below about 190px the scaled resume preview
+     stops being legible and the cards stop being distinguishable, which is
+     the whole point of them. On a 375px phone this gives one full-width
+     card; a tablet still gets three. */
+  .rm-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--rm-sp-3); }
+
+  /* Actions drop under the title instead of squeezing it. */
+  .rm-dash-head { flex-direction: column; align-items: stretch; gap: var(--rm-sp-3); }
+  .rm-dash-actions .rm-btn { flex: 1; justify-content: center; }
 }
 
 /* ---------- admin dashboard ---------- */
@@ -563,18 +625,18 @@ body {
   flex: 1; border: 1px solid var(--rm-border); border-radius: var(--rm-r);
   background: var(--rm-surface); padding: 14px 16px;
 }
-.rm-admin-num { font-family: var(--rm-font-mono); font-size: 24px; font-weight: 500; }
+.rm-admin-num { font-family: var(--rm-font-mono); font-size: var(--rm-fs-2xl); font-weight: 500; }
 
 .rm-chart { display: flex; align-items: flex-end; gap: 3px; height: 52px; border-bottom: 1px solid var(--rm-border); padding-bottom: 2px; }
 .rm-chart-col { display: flex; align-items: flex-end; gap: 1px; flex: 1; }
-.rm-bar { flex: 1; background: var(--rm-accent); border-radius: 1px; min-height: 2px; opacity: .8; }
+.rm-bar { flex: 1; background: var(--rm-accent); border-radius: var(--rm-r-sm); min-height: 2px; opacity: .8; }
 .rm-chart-col .rm-bar:nth-child(2) { background: var(--rm-green); }
 .rm-chart-col .rm-bar:nth-child(3) { background: var(--rm-amber); }
 
 .rm-admin-userlist { border: 1px solid var(--rm-border); border-radius: var(--rm-r); overflow: hidden; }
 .rm-admin-user-row {
   display: flex; justify-content: space-between; align-items: center; width: 100%;
-  padding: 10px 14px; border-bottom: 1px solid var(--rm-border); font-size: 13px;
+  padding: 10px 14px; border-bottom: 1px solid var(--rm-border); font-size: var(--rm-fs-md);
   background: var(--rm-surface); transition: background .12s;
 }
 .rm-admin-user-row:last-child { border-bottom: none; }
@@ -583,7 +645,7 @@ body {
 /* ---------- resume importer ---------- */
 .rm-dropzone {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  border: 1.5px dashed var(--rm-border-strong); border-radius: 12px;
+  border: 1.5px dashed var(--rm-border-strong); border-radius: var(--rm-r);
   padding: 36px 20px; margin-top: 18px; cursor: pointer; text-align: center;
   color: var(--rm-text-2); transition: border-color .12s, background .12s, color .12s;
 }
@@ -594,9 +656,9 @@ body {
 .rm-import-working { margin-top: 20px; padding: 18px; border: 1px solid var(--rm-border); border-radius: var(--rm-r); background: var(--rm-surface); }
 
 .rm-import-section { margin-top: 18px; border: 1px solid var(--rm-border); border-radius: var(--rm-r); background: var(--rm-surface); padding: 12px 14px; }
-.rm-import-sechead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 650; margin-bottom: 8px; }
+.rm-import-sechead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: var(--rm-fs-md); font-weight: 650; margin-bottom: 8px; }
 .rm-import-sechead .rm-hint { margin-top: 0; }
-.rm-import-item { display: flex; align-items: flex-start; gap: 9px; padding: 6px 0; font-size: 13px; line-height: 1.45; cursor: pointer; }
+.rm-import-item { display: flex; align-items: flex-start; gap: 9px; padding: 6px 0; font-size: var(--rm-fs-md); line-height: 1.45; cursor: pointer; }
 .rm-import-item input { margin-top: 3px; flex: 0 0 auto; cursor: pointer; }
 .rm-import-item input:disabled { cursor: not-allowed; }
 .rm-import-item input:disabled + span { opacity: .45; }
@@ -604,13 +666,13 @@ body {
 /* ---------- photo upload ---------- */
 .rm-photo-row { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
 .rm-photo-preview {
-  width: 46px; height: 50px; border: 1px solid var(--rm-border-strong); border-radius: 4px;
+  width: 46px; height: 50px; border: 1px solid var(--rm-border-strong); border-radius: var(--rm-r-sm);
   object-fit: cover; background: var(--rm-surface-3); flex: 0 0 auto;
 }
 .rm-photo-actions { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
 .rm-photo-actions input[type="file"] { display: none; }
 .rm-photo-btn {
-  font-size: 12.5px; font-weight: 550; color: var(--rm-accent);
+  font-size: var(--rm-fs-sm); font-weight: 550; color: var(--rm-accent);
   border: 1px solid var(--rm-accent-border); background: var(--rm-accent-soft);
   padding: 4px 10px; border-radius: var(--rm-r-sm); cursor: pointer;
 }
