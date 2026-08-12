@@ -33,8 +33,8 @@
   --rm-focus-ring: rgba(122, 27, 4, .13);
   --rm-overlay: rgba(255, 255, 255, .75);
   --rm-photo-btn-hover: #f0dcc9;
-  --rm-r: 9px;
-  --rm-r-sm: 6px;
+  --rm-r: 11px;
+  --rm-r-sm: 7px;
   --rm-shadow-sm: 0 1px 2px rgba(36, 26, 18, .05), 0 1px 3px rgba(36, 26, 18, .06);
   --rm-shadow-lg: 0 12px 32px rgba(36, 26, 18, .11), 0 2px 8px rgba(36, 26, 18, .07);
   --rm-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -54,12 +54,12 @@
    both themes; a "dark mode resume" isn't a real T&P submission. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --rm-bg: #1c1712;
-    --rm-surface: #241d17;
-    --rm-surface-2: #2a2119;
-    --rm-surface-3: #332821;
-    --rm-border: #3d3226;
-    --rm-border-strong: #4d4030;
+    --rm-bg: #18130f;
+    --rm-surface: #26201a;
+    --rm-surface-2: #2f2821;
+    --rm-surface-3: #3b3228;
+    --rm-border: #4a3f32;
+    --rm-border-strong: #5f5140;
     --rm-text: #f1e7d8;
     --rm-text-2: #c3b39e;
     --rm-text-3: #8f8170;
@@ -85,12 +85,12 @@
   }
 }
 :root[data-theme="dark"] {
-  --rm-bg: #1c1712;
-  --rm-surface: #241d17;
-  --rm-surface-2: #2a2119;
-  --rm-surface-3: #332821;
-  --rm-border: #3d3226;
-  --rm-border-strong: #4d4030;
+  --rm-bg: #18130f;
+  --rm-surface: #26201a;
+  --rm-surface-2: #2f2821;
+  --rm-surface-3: #3b3228;
+  --rm-border: #4a3f32;
+  --rm-border-strong: #5f5140;
   --rm-text: #f1e7d8;
   --rm-text-2: #c3b39e;
   --rm-text-3: #8f8170;
@@ -425,12 +425,12 @@ body {
   border: 1px solid var(--rm-border); border-radius: var(--rm-r);
   background: var(--rm-surface-2); padding: 18px 20px; margin-bottom: 20px;
 }
-.rm-dash-empty > svg { color: var(--rm-accent-border); flex: 0 0 auto; }
+.rm-dash-empty .rm-card-new-icon { flex: 0 0 auto; }
 .rm-dash-empty-title { font-family: var(--rm-font-display); font-weight: 600; font-size: 15px; margin-bottom: 3px; }
 
 .rm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 15px; }
 .rm-card {
-  background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px;
+  background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 14px;
   overflow: hidden; box-shadow: var(--rm-shadow-sm); position: relative;
   transition: box-shadow .14s, transform .14s, border-color .14s;
 }
@@ -447,21 +447,26 @@ body {
    for a card to look like a specific resume instead of an empty box. */
 .rm-card-thumb-page {
   width: 100%; height: 100%; background: #fff;
-  border: 1px solid var(--rm-border); border-radius: 3px;
+  border: 1px solid var(--rm-border); border-radius: 6px;
   box-shadow: var(--rm-shadow-sm);
   padding: 10px 12px; overflow: hidden;
 }
+/* Fixed, not theme-aware, on purpose: the page behind this text is always
+   #fff (see above), in both themes — using --rm-text here was the actual
+   bug that made dark mode look broken, not just "off". Dark mode's --rm-text
+   is a light cream meant for light-on-dark text; put on this permanently
+   white page it went nearly invisible. */
 .rm-card-thumb-name {
   font-family: var(--rm-font-display); font-weight: 600; font-size: 12.5px;
-  color: var(--rm-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: #241a12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .rm-card-thumb-degree {
-  font-size: 9.5px; color: var(--rm-text-3); margin-top: 2px;
+  font-size: 9.5px; color: #74665a; margin-top: 2px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .rm-card-thumb-rule { height: 1.5px; background: var(--rm-accent); margin: 7px 0 8px; opacity: .8; }
 .rm-card-thumb-lines { display: flex; flex-direction: column; gap: 4px; }
-.rm-card-thumb-lines span { display: block; height: 4px; border-radius: 1px; background: var(--rm-surface-3); }
+.rm-card-thumb-lines span { display: block; height: 4px; border-radius: 1px; background: #eee6d8; }
 .rm-card-thumb-lines span:nth-child(1) { width: 88%; }
 .rm-card-thumb-lines span:nth-child(2) { width: 72%; }
 .rm-card-thumb-lines span:nth-child(3) { width: 80%; }
@@ -470,12 +475,23 @@ body {
 .rm-card-date { font-size: 12px; color: var(--rm-text-3); margin-top: 2px; }
 .rm-card-actions { position: absolute; top: 9px; right: 9px; display: flex; gap: 2px; background: var(--rm-surface); border-radius: 7px; box-shadow: var(--rm-shadow-sm); border: 1px solid var(--rm-border); }
 .rm-card-new {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px;
   min-height: 178px; border: 1.5px dashed var(--rm-border-strong); background: none;
   color: var(--rm-text-2); font-weight: 550; box-shadow: none; width: 100%;
+  border-radius: 14px;
 }
 .rm-card-new:hover:not(:disabled) { border-color: var(--rm-accent); color: var(--rm-accent); background: var(--rm-accent-soft); transform: translateY(-2px); }
 .rm-card-new:disabled { opacity: .6; cursor: not-allowed; }
+/* A soft circle behind the plus/upload icon so these two dashed cards carry
+   as much visual weight as the content-rich resume cards next to them,
+   rather than reading as a thinner, emptier afterthought. */
+.rm-card-new-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--rm-surface-2); color: var(--rm-text-2);
+  transition: background .14s, color .14s;
+}
+.rm-card-new:hover:not(:disabled) .rm-card-new-icon { background: var(--rm-accent-soft); color: var(--rm-accent); }
 
 .rm-page-loading { flex: 1; display: grid; place-items: center; color: var(--rm-text-2); font-size: 14px; gap: 12px; height: 100vh; flex-direction: column; }
 

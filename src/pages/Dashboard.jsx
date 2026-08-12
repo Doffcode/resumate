@@ -63,7 +63,7 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
             <>
               {resumes.length === 0 && (
                 <div className="rm-dash-empty">
-                  <Icon d={icons.doc} size={26} />
+                  <span className="rm-card-new-icon"><Icon d={icons.doc} size={20} /></span>
                   <div>
                     <div className="rm-dash-empty-title">No resumes yet</div>
                     <div className="rm-hint">Start from scratch, or import one you already have — either way, you'll be editing in a few seconds.</div>
@@ -116,12 +116,12 @@ export default function Dashboard({ user, onOpen, onSignOut, onNavigate }) {
               ))}
 
               <button className="rm-card rm-card-new" onClick={handleCreate} disabled={creating}>
-                <Icon d={icons.plus} size={22} />
+                <span className="rm-card-new-icon"><Icon d={icons.plus} size={20} /></span>
                 {creating ? 'Creating…' : 'New resume'}
               </button>
 
               <button className="rm-card rm-card-new" onClick={() => onNavigate('import')}>
-                <Icon d={icons.upload} size={22} />
+                <span className="rm-card-new-icon"><Icon d={icons.upload} size={20} /></span>
                 Import old resume
               </button>
               </div>
