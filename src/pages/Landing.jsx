@@ -23,6 +23,9 @@ const IconCrop = (p) => (
 const IconStack = (p) => (
   <svg viewBox="0 0 24 24" {...p}><path d="M12 3l9 5-9 5-9-5 9-5z" /><path d="M3 13l9 5 9-5" /></svg>
 );
+const IconSpark = (p) => (
+  <svg viewBox="0 0 24 24" {...p}><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2z" /></svg>
+);
 
 // Fires scroll-reveal once per element and never again — a quiet, single
 // pass down the page rather than a replaying effect.
@@ -154,10 +157,11 @@ export default function Landing({ onSignIn, onGetStarted, onPrivacy, onTerms }) 
         <div className="rm-land-shell">
           <div className="rm-land-section-head">
             <span className="rm-land-eyebrow">What's in it</span>
-            <h2 className="rm-land-h2">Four things doing the actual work</h2>
+            <h2 className="rm-land-h2">Five things doing the actual work</h2>
             <p className="rm-land-section-sub">
-              Not a generic template. Every part below exists because of a specific rule in the
-              T&amp;P office's own format guide.
+              Not a generic template. Four of these exist because of a specific rule in the
+              T&amp;P office's own format guide — the fifth is there to make what you actually
+              wrote stronger.
             </p>
           </div>
           <div className="rm-land-features">
@@ -184,6 +188,12 @@ export default function Landing({ onSignIn, onGetStarted, onPrivacy, onTerms }) 
               <IconStack className="rm-land-feature-icon" />
               <h3>Pixel-matched export</h3>
               <p>What you see while editing is what the PDF export produces — down to the pixel. No layout shifting, no surprise third page.</p>
+            </div>
+            <div className="rm-land-feature">
+              <div className="rm-land-feature-no">05</div>
+              <IconSpark className="rm-land-feature-icon" />
+              <h3>Match a job description</h3>
+              <p>Paste a JD and it rewrites your bullets with its keywords and flags what you're missing — nothing is added to your resume without your approval.</p>
             </div>
           </div>
         </div>

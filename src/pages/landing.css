@@ -212,7 +212,7 @@ body.rm-landing-active #root { height: auto; overflow: visible; }
 .rm-land-compare-list b { font-weight: 600; }
 
 /* ---------- feature cards ---------- */
-.rm-land-features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--land-line); border: 1px solid var(--land-line); border-radius: 6px; overflow: hidden; }
+.rm-land-features { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--land-line); border: 1px solid var(--land-line); border-radius: 6px; overflow: hidden; }
 .rm-land-feature { background: var(--land-card); padding: 24px 22px 26px; display: flex; flex-direction: column; }
 .rm-land-feature-no { font-family: var(--land-mono); font-size: 11px; color: var(--land-ink-3); letter-spacing: .05em; margin-bottom: 16px; }
 .rm-land-feature-icon { width: 30px; height: 30px; stroke: var(--land-maroon); fill: none; stroke-width: 1.5; margin-bottom: 14px; }
@@ -287,6 +287,8 @@ body.rm-landing-active #root { height: auto; overflow: visible; }
   .rm-land-compare { grid-template-columns: 1fr; }
   .rm-land-compare-col + .rm-land-compare-col { border-left: none; border-top: 1px solid var(--land-line); }
   .rm-land-features { grid-template-columns: 1fr 1fr; }
+  /* 5 cards in 2 columns leaves a lone half-width orphan; give it the row. */
+  .rm-land-feature:last-child { grid-column: 1 / -1; }
   .rm-land-steps { grid-template-columns: 1fr; gap: 28px; }
   .rm-land-step:not(:last-child)::after { display: none; }
   .rm-land-fact { flex: 1 1 45%; }
