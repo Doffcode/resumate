@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { allSections } from '../data/defaultResume.js';
 import { useResumeData } from '../state/useResumeData.js';
 import { useMeasure } from '../pagination/useMeasure.js';
@@ -28,6 +28,8 @@ export default function EditorPage({ resumeId, onBack }) {
   const preview = useDebounced(rd.data, 400);
   const { pages, units, fill, baseFontSize, contentRef, headerRef, unitRefs } = useMeasure(preview, allSections);
   const [zoom, setZoom] = useState(100);
+  const zoomTouched = useRef(false); // once the user picks a zoom manually, stop auto-fitting over it
+  const canvasRef = useRef(null);
   const [panel, setPanel] = useState('check'); // 'check' | 'ai' | null
   const [exporting, setExporting] = useState(false);
   const [exportNotice, setExportNotice] = useState(null);
@@ -46,6 +48,40 @@ export default function EditorPage({ resumeId, onBack }) {
   };
   // Checks run against live data, not the debounced copy, so a fix reads as instant.
   const check = useFormatCheck(rd.data, fill);
+
+  // Auto-fit zoom so the fixed-width A4 page (210mm, ~794px) never silently
+  // overflows the canvas — it did, even at fairly ordinary desktop widths,
+  // whenever the sidebar and a side panel left less than ~794px in between:
+  // the page just clipped on both edges with nothing indicating it was
+  // scrollable. Re-fits on any resize of the canvas itself (window resize,
+  // sidebar toggle, a panel opening) via ResizeObserver — until the user
+  // picks a zoom level manually, after which their choice is respected.
+  //
+  // Skipped at the ≤768px mobile breakpoint on purpose: editor.css's own
+  // comment there already documents a deliberate choice to keep the page at
+  // real size and rely on horizontal scroll instead of shrinking it, since
+  // shrinking a full A4 page to phone width makes the text illegible. This
+  // only fills the gap above that — a desktop-sized window too narrow for
+  // the sidebar, preview and a side panel together, which had no such
+  // scroll-based design and just clipped instead.
+  useEffect(() => {
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) return;
+    const fit = () => {
+      if (zoomTouched.current || window.innerWidth <= 768) return;
+      const pageEl = canvasEl.querySelector('.rm-pages .resume-page');
+      // clientWidth reflects layout size, unaffected by the zoom transform.
+      const natural = pageEl?.clientWidth;
+      if (!natural) return;
+      const available = canvasEl.clientWidth - 24;
+      const fitPct = Math.floor((available / natural) * 100 / 5) * 5;
+      setZoom(Math.max(50, Math.min(100, fitPct)));
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(canvasEl);
+    return () => ro.disconnect();
+  }, [pages.length]);
 
   const overflowing = fill.findIndex((f) => f > 100);
   const underfull = fill.findIndex((f, i) => i < fill.length - 1 && f < UNDERFULL);
@@ -123,9 +159,9 @@ export default function EditorPage({ resumeId, onBack }) {
         <section className="rm-preview">
           <div className="rm-preview-bar">
             <div className="rm-pill">
-              <button onClick={() => setZoom((z) => Math.max(50, z - 10))} aria-label="Zoom out">−</button>
+              <button onClick={() => { zoomTouched.current = true; setZoom((z) => Math.max(50, z - 10)); }} aria-label="Zoom out">−</button>
               <span className="rm-zoomval">{zoom}%</span>
-              <button onClick={() => setZoom((z) => Math.min(160, z + 10))} aria-label="Zoom in">+</button>
+              <button onClick={() => { zoomTouched.current = true; setZoom((z) => Math.min(160, z + 10)); }} aria-label="Zoom in">+</button>
             </div>
             <span className="rm-pagelabel">{pages.length} page{pages.length === 1 ? '' : 's'} · A4</span>
             <div className="rm-spacer" />
@@ -143,7 +179,7 @@ export default function EditorPage({ resumeId, onBack }) {
             )}
           </div>
 
-          <div className="rm-canvas">
+          <div className="rm-canvas" ref={canvasRef}>
             <MeasureArea
               units={units}
               data={preview}
