@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('VITE_SUPABASE_URL') || '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-    const deepseekApiKey = Deno.env.get('DEEPSEEK_API_KEY') || '';
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY') || '';
 
     if (!supabaseUrl || !supabaseServiceKey) {
       return new Response(
@@ -75,10 +75,11 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Rate limit — both modes below call DeepSeek, a paid API, and until now
-    // neither had any cap (unlike api/parse-resume.js's identical 10/hour
-    // check, which exists for exactly this reason). Counts the same
-    // 'ai_call' rows this function already logs on success, so no new table.
+    // Rate limit — both modes below call the Gemini API, whose free tier has
+    // its own request caps, and until now neither had any cap of its own
+    // (unlike api/parse-resume.js's identical 10/hour check, which exists for
+    // exactly this reason). Counts the same 'ai_call' rows this function
+    // already logs on success, so no new table.
     // Fails CLOSED: a counting error blocks the call rather than allowing it.
     const AI_RATE_LIMIT = 10;
     const AI_RATE_WINDOW_MS = 60 * 60 * 1000;
@@ -123,33 +124,29 @@ ${JSON.stringify({ skills: resume.skills, projects: resume.projects }, null, 2)}
 
       let draftedProject = null;
 
-      if (deepseekApiKey) {
+      if (geminiApiKey) {
         try {
-          const aiRes = await fetch('https://api.deepseek.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${deepseekApiKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              model: 'deepseek-chat',
-              messages: [
-                { role: 'system', content: draftSystemPrompt },
-                { role: 'user', content: draftUserPrompt }
-              ],
-              temperature: 0.4,
-              max_tokens: 800
-            })
-          });
+          const aiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                system_instruction: { parts: [{ text: draftSystemPrompt }] },
+                contents: [{ parts: [{ text: draftUserPrompt }] }],
+                generationConfig: { temperature: 0.4, maxOutputTokens: 800, responseMimeType: 'application/json' }
+              })
+            }
+          );
 
           if (!aiRes.ok) {
             const errText = await aiRes.text();
-            console.error('DeepSeek API Error:', errText);
-            throw new Error(`DeepSeek API error: ${errText}`);
+            console.error('Gemini API Error:', errText);
+            throw new Error(`Gemini API error: ${errText}`);
           }
 
           const aiData = await aiRes.json();
-          const rawContent = aiData.choices?.[0]?.message?.content || '';
+          const rawContent = aiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
           const cleaned = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
 
           let parsed = null;
@@ -250,38 +247,34 @@ ${job_description_text}`;
 
     let parsedSuggestions = null;
 
-    if (deepseekApiKey) {
-      const aiResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${deepseekApiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ],
-          temperature: 0.3,
-          max_tokens: 1500
-        })
-      });
+    if (geminiApiKey) {
+      const aiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ parts: [{ text: userPrompt }] }],
+            generationConfig: { temperature: 0.3, maxOutputTokens: 1500, responseMimeType: 'application/json' }
+          })
+        }
+      );
 
       if (!aiResponse.ok) {
         const errText = await aiResponse.text();
-        console.error('DeepSeek API Error:', errText);
-        throw new Error(`DeepSeek API returned status ${aiResponse.status}`);
+        console.error('Gemini API Error:', errText);
+        throw new Error(`Gemini API returned status ${aiResponse.status}`);
       }
 
       const aiData = await aiResponse.json();
-      const rawContent = aiData.choices?.[0]?.message?.content || '';
+      const rawContent = aiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
       try {
         const cleaned = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
         parsedSuggestions = JSON.parse(cleaned);
       } catch (parseErr) {
-        console.error('Failed to parse DeepSeek JSON response. Raw text:', rawContent);
+        console.error('Failed to parse Gemini JSON response. Raw text:', rawContent);
         return new Response(
           JSON.stringify({ error: "AI response couldn't be processed, please try again." }),
           { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

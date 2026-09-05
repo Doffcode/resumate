@@ -61,9 +61,9 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const deepseekKey = process.env.DEEPSEEK_API_KEY;
+  const geminiApiKey = process.env.GEMINI_API_KEY;
   if (!supabaseUrl || !anonKey) return err(res, 500, 'Server misconfigured: Supabase env vars missing.');
-  if (!deepseekKey) return err(res, 500, 'Server misconfigured: DEEPSEEK_API_KEY missing.');
+  if (!geminiApiKey) return err(res, 500, 'Server misconfigured: GEMINI_API_KEY missing.');
 
   const userClient = createClient(supabaseUrl, anonKey, {
     global: { headers: { Authorization: `Bearer ${token}` } },
@@ -88,29 +88,26 @@ export default async function handler(req, res) {
   }
 
   try {
-    const aiRes = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${deepseekKey}`,
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: text.slice(0, MAX_CHARS) },
-        ],
-        temperature: 0,
-      }),
-    });
+    const aiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ parts: [{ text: text.slice(0, MAX_CHARS) }] }],
+          generationConfig: { temperature: 0, responseMimeType: 'application/json' },
+        }),
+      }
+    );
 
     if (!aiRes.ok) {
-      console.error('parse-resume: DeepSeek returned', aiRes.status);
+      console.error('parse-resume: Gemini returned', aiRes.status);
       return err(res, 502, 'The parsing service is unavailable right now. Please try again.');
     }
 
     const body = await aiRes.json();
-    const raw = body?.choices?.[0]?.message?.content || '';
+    const raw = body?.candidates?.[0]?.content?.parts?.[0]?.text || '';
     let parsed;
     try {
       parsed = JSON.parse(raw.replace(/```json/gi, '').replace(/```/g, '').trim());

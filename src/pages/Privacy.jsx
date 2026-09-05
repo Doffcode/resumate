@@ -19,10 +19,10 @@ export default function Privacy({ onBack }) {
           <p>In a Supabase (PostgreSQL) database. Access is restricted so you can only ever read or write your own resumes — not other students'.</p>
 
           <h2>The AI assistant</h2>
-          <p>If you use it, the text of your resume and any job description you paste is sent to DeepSeek's API to generate suggestions. Nothing is sent unless you explicitly use that feature, and suggestions are never applied without you clicking to accept them.</p>
+          <p>If you use it, the text of your resume and any job description you paste is sent to Google's Gemini API to generate suggestions. Nothing is sent unless you explicitly use that feature, and suggestions are never applied without you clicking to accept them.</p>
 
           <h2>Importing an old resume</h2>
-          <p>If you import an existing resume, the file itself never leaves your browser — it is read on your own device, and only the extracted plain text is sent to DeepSeek's API to work out which parts go where. Nothing is saved until you review the result and choose to create the resume.</p>
+          <p>If you import an existing resume, the file itself never leaves your browser — it is read on your own device, and only the extracted plain text is sent to Google's Gemini API to work out which parts go where. Nothing is saved until you review the result and choose to create the resume.</p>
 
           <h2>Your photo</h2>
           <p>If you upload a passport photo it is resized in your browser and stored with your resume data, the same as any other field. It is only ever used to render your own resume.</p>
