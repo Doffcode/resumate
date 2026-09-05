@@ -112,7 +112,12 @@ export const defaultResume = {
     extracurriculars: true
   },
   layoutSettings: {
-    baseFontSize: 16 // 16px matches the original PDF's 12pt size
+    baseFontSize: 16, // 16px matches the original PDF's 12pt size
+    // em, gap between bulleted entries — shared by every such section
+    // (Projects, Internships, Positions, Areas of Interest, Skills,
+    // Extracurricular Activities) so the resume stays uniformly spaced,
+    // per the T&P guide's own "maintain uniform spacing" rule.
+    itemSpacing: 0.8
   }
 };
 

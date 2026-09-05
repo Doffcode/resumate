@@ -246,6 +246,17 @@ input, textarea, select { font: inherit; color: inherit; }
 /* fields */
 .rm-field { margin-top: 11px; }
 .rm-field label { display: block; font-size: var(--rm-fs-sm); font-weight: 550; color: var(--rm-text-2); margin-bottom: 5px; }
+.rm-field-label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+.rm-field-label-row label { margin-bottom: 0; }
+.rm-bold-btn {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: var(--rm-r-sm);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 11px; font-family: Georgia, 'Times New Roman', serif;
+  color: var(--rm-text-3); border: 1px solid var(--rm-border-input);
+  background: var(--rm-surface); transition: background .12s, color .12s, border-color .12s;
+}
+.rm-bold-btn:hover { background: var(--rm-surface-3); color: var(--rm-text); border-color: var(--rm-border-strong); }
+.rm-range { width: 100%; accent-color: var(--rm-accent); cursor: pointer; }
 .rm-input, .rm-textarea {
   width: 100%; padding: 7px 10px;
   background: var(--rm-surface);

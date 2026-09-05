@@ -6,9 +6,55 @@
 //   * The same components render the on-screen preview AND the server-side PDF,
 //     which is what makes pixel parity structural instead of hand-maintained.
 //   * Any change here must be verified with a pixel-diff against ../../golden/.
+import { useLayoutEffect, useRef, useState } from 'react';
 import defaultLogo from '../assets/nitt_logo.png';
 import defaultPhoto from '../assets/student_photo.png';
-import { capitalizeFirst, renderOrdinals, resolveSectionTitle } from './text.jsx';
+import { capitalizeFirst, renderBold, renderOrdinals, resolveSectionTitle } from './text.jsx';
+
+// A title+date header where the date normally sits flush-right on the same
+// line (matches the frozen layout for the common case: a short title). When
+// the title is long enough that sharing the line with the date pushes it to
+// wrap, the date would otherwise stay stranded on line 1 while the title
+// continues below it. This measures the rendered title after paint and, only
+// if it actually wrapped under that constraint, switches to a layout where
+// the date drops to its own left-aligned line directly under the title,
+// instead of floating above it on line 1.
+//
+// One-directional by design: once wrapped is detected true, it is never
+// reset back to false during this mount. Re-measuring the reverse (would it
+// now fit unwrapped?) would require rendering the OTHER layout to check,
+// which risks flip-flopping every render. A shorter edit that no longer
+// needs the wrapped layout self-corrects on the next remount (e.g. reload).
+function ItemHeader({ title, date }) {
+  const titleRef = useRef(null);
+  const dateRef = useRef(null);
+  const [wrapped, setWrapped] = useState(false);
+
+  useLayoutEffect(() => {
+    if (wrapped) return;
+    const titleEl = titleRef.current;
+    const dateEl = dateRef.current;
+    if (!titleEl || !dateEl) return;
+    // A flex item is blockified by the flex layout spec, so its
+    // getClientRects() always reports exactly one rect no matter how many
+    // internal lines its text wraps to — line count isn't observable that
+    // way. Compare rendered height against the date's instead: the date
+    // never wraps (white-space: nowrap), so its one-line height is a stable
+    // per-render reference that scales correctly with the current font size.
+    const titleH = titleEl.getBoundingClientRect().height;
+    const dateH = dateEl.getBoundingClientRect().height;
+    if (titleH > dateH * 1.4) setWrapped(true);
+  }, [title, date, wrapped]);
+
+  return (
+    <div className={`resume-item-header${wrapped ? ' resume-item-header--wrapped' : ''}`}>
+      <span className="resume-item-title" ref={titleRef}>{title}</span>
+      {wrapped
+        ? <div className="resume-item-date">{date}</div>
+        : <span className="resume-item-date" ref={dateRef}>{date}</span>}
+    </div>
+  );
+}
 
 export function Header({ data }) {
   const p = data.personalInfo;
@@ -78,14 +124,14 @@ export function EducationTable({ data }) {
 
 export function Item({ sec, item }) {
   if (sec.type === 'areas') {
-    return <div className="resume-item"><span>{capitalizeFirst(item.text)}</span></div>;
+    return <div className="resume-item"><span>{renderBold(capitalizeFirst(item.text))}</span></div>;
   }
   if (sec.type === 'skills') {
     return (
       <div className="resume-skill-item">
         <span className="resume-skill-label">{item.label}</span>
         {item.label && item.value && <span> : </span>}
-        <span>{item.value}</span>
+        <span>{renderBold(item.value)}</span>
       </div>
     );
   }
@@ -93,15 +139,12 @@ export function Item({ sec, item }) {
   const bullets = (item.bullets || []).filter((b) => b.trim());
   return (
     <div className="resume-item">
-      <div className="resume-item-header">
-        <span className="resume-item-title">{item.title}</span>
-        <span className="resume-item-date">{item.date}</span>
-      </div>
-      {item.description && <div className="resume-item-desc">{capitalizeFirst(item.description)}</div>}
+      <ItemHeader title={item.title} date={item.date} />
+      {item.description && <div className="resume-item-desc">{renderBold(capitalizeFirst(item.description))}</div>}
       {bullets.length > 0 && (
         <div className="resume-item-bullets">
           {bullets.map((b, bi) => (
-            <div className="resume-item" key={bi}><span>{capitalizeFirst(b)}</span></div>
+            <div className="resume-item" key={bi}><span>{renderBold(capitalizeFirst(b))}</span></div>
           ))}
         </div>
       )}
@@ -114,12 +157,13 @@ export function Subblock({ data, subType }) {
   const isSport = subType === 'sport';
   const items = isSport ? data.extracurriculars.sport : data.extracurriculars.social;
   if (items.length === 0) return null;
+  const spacing = data.layoutSettings?.itemSpacing ?? 0.8;
   return (
     <>
       <div className="resume-subheading">{isSport ? 'Sports Activities:' : 'Social Activities:'}</div>
-      <div className="resume-items-container" style={{ gap: '0.2em', marginBottom: '0.5em' }}>
+      <div className="resume-items-container" style={{ gap: `${spacing}em`, marginBottom: '0.5em' }}>
         {items.map((item) => (
-          <div className="resume-item" key={item.id}><span>{capitalizeFirst(item.text)}</span></div>
+          <div className="resume-item" key={item.id}><span>{renderBold(capitalizeFirst(item.text))}</span></div>
         ))}
       </div>
     </>

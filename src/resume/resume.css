@@ -229,6 +229,19 @@
   justify-content: space-between;
   align-items: baseline;
 }
+/* Long titles that wrap: date drops to its own left-aligned line right under
+   the title (see ItemHeader in parts.jsx), instead of staying pinned to line
+   1 in the flex layout above. */
+.resume-item-header--wrapped {
+  display: block;
+}
+.resume-item-header--wrapped .resume-item-title {
+  display: block;
+}
+.resume-item-header--wrapped .resume-item-date {
+  display: block;
+  margin-top: 0.1em;
+}
 .resume-item-title {
   font-weight: bold;
   font-size: 1em;

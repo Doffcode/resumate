@@ -93,18 +93,6 @@ export function paginate(units, contentHeights, margins, availableFirst, availab
     pages.push(cur);
   }
   if (pages.length === 0) pages.push({ isFirstPage: true, units: [] });
-
-  // When a section's items continue onto the next page, repeat its heading at
-  // the top of that page so the continuation is anchored (no orphaned items).
-  let prevSecId = null;
-  for (const page of pages) {
-    const first = page.units[0];
-    if (first && (first.kind === 'item' || first.kind === 'subblock') && prevSecId === first.sec.id) {
-      page.units.unshift({ kind: 'sectionHeader', sec: first.sec, breakBefore: false, isContinuation: true });
-    }
-    const last = page.units[page.units.length - 1];
-    prevSecId = last ? last.sec.id : null;
-  }
   return pages;
 }
 

@@ -6,6 +6,21 @@
 import { Header, Footer, Unit, unitTypeClass } from './parts.jsx';
 import './resume.css';
 
+// Every bulleted-item unit shares one user-adjustable spacing
+// (data.layoutSettings.itemSpacing), overriding resume.css's fixed
+// .page-unit.unit-item margin-top — kept in one place, applied uniformly, so
+// the resume can't end up with inconsistent spacing between sections (the
+// T&P guide flags uneven spacing as a mistake). Extracurricular sub-items
+// are a 'subblock' unit, not 'item', and get the same value passed as a prop
+// instead — see Subblock in parts.jsx.
+function unitStyle(u, data) {
+  if (u.kind === 'item') {
+    const spacing = data.layoutSettings?.itemSpacing;
+    if (spacing != null) return { marginTop: `${spacing}em` };
+  }
+  return undefined;
+}
+
 export function ResumePages({ pages, data, baseFontSize = 16 }) {
   return (
     <>
@@ -17,6 +32,7 @@ export function ResumePages({ pages, data, baseFontSize = 16 }) {
               <div
                 className={`page-unit ${unitTypeClass(u)} ${ui === 0 ? 'first-on-page' : ''}`}
                 key={`${u.kind}-${u.sec.id}-${u.item ? u.item.id : u.subType || 'section'}`}
+                style={unitStyle(u, data)}
               >
                 <Unit u={u} data={data} />
               </div>
@@ -39,6 +55,7 @@ export function MeasureArea({ units, data, baseFontSize = 16, contentRef, header
             <div
               className={`measure-unit ${unitTypeClass(u)}`}
               key={i}
+              style={unitStyle(u, data)}
               ref={(el) => { if (el) unitRefs.current[i] = el; }}
             >
               <Unit u={u} data={data} />

@@ -1,8 +1,23 @@
 // Display-only text helpers shared by the sealed renderer.
 // Guide rule #16: the first letter of every description must be capitalised.
+// Matches the first LETTER rather than assuming index 0 is it, so a leading
+// **bold** marker (see renderBold below) doesn't get capitalised itself.
 export const capitalizeFirst = (str) => {
   if (!str) return str;
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.replace(/[a-zA-Z]/, (c) => c.toUpperCase());
+};
+
+// Renders **bold** markers (added by the editor's Bold button) as <strong>.
+// Apply after capitalizeFirst — operates on the same plain string and only
+// changes how already-typed ** pairs render, never introduces its own.
+export const renderBold = (text) => {
+  if (!text) return text;
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) => {
+    const m = /^\*\*([^*]+)\*\*$/.exec(part);
+    return m ? <strong key={i}>{m[1]}</strong> : part;
+  });
 };
 
 // Renders ordinals as superscripts: "1st semester" -> 1<sup>st</sup> semester.
