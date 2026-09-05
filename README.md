@@ -67,8 +67,10 @@ not just built:**
 - Full editor: sections, page-break inserters, Format Check.
 - Supabase auth + per-resume storage (sign up/in, multi-resume dashboard,
   create/rename/delete, autosave — all confirmed via direct DB queries).
-- AI assistant: real DeepSeek calls confirmed, all four suggestion actions
-  (Replace/Keep Both/Add to Skills/confirm-and-add) verified to persist.
+- AI assistant: calls Google's Gemini API (`gemini-2.0-flash`, free tier),
+  all four suggestion actions (Replace/Keep Both/Add to Skills/confirm-and-add)
+  verified to persist. Switched from DeepSeek after its account ran out of
+  paid credits (402) — Gemini's free tier covers current usage.
 - PDF export: real auth, real resume data, rate limiting. Verified against a
   real Vercel serverless deployment — cold ~4.9s, warm ~2.7s render times —
   and the RLS-based security model was tested, not assumed (a second test
