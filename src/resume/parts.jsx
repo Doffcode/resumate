@@ -17,8 +17,8 @@ import { capitalizeFirst, renderBold, renderOrdinals, resolveSectionTitle } from
 // wrap, the date would otherwise stay stranded on line 1 while the title
 // continues below it. This measures the rendered title after paint and, only
 // if it actually wrapped under that constraint, switches to a layout where
-// the date is inline text immediately after the title, so it lands wherever
-// the title's last line actually ends instead of floating above it.
+// the date drops to its own left-aligned line directly under the title,
+// instead of floating above it on line 1.
 //
 // One-directional by design: once wrapped is detected true, it is never
 // reset back to false during this mount. Re-measuring the reverse (would it
@@ -48,11 +48,10 @@ function ItemHeader({ title, date }) {
 
   return (
     <div className={`resume-item-header${wrapped ? ' resume-item-header--wrapped' : ''}`}>
-      <span className="resume-item-title" ref={titleRef}>
-        {title}
-        {wrapped && <span className="resume-item-date"> {date}</span>}
-      </span>
-      {!wrapped && <span className="resume-item-date" ref={dateRef}>{date}</span>}
+      <span className="resume-item-title" ref={titleRef}>{title}</span>
+      {wrapped
+        ? <div className="resume-item-date">{date}</div>
+        : <span className="resume-item-date" ref={dateRef}>{date}</span>}
     </div>
   );
 }
