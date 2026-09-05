@@ -121,6 +121,7 @@ export function useResumeData(resumeId) {
 
   const api = {
     setPersonal: (field, value) => update((d) => { d.personalInfo[field] = value; return d; }),
+    setLayoutSetting: (field, value) => update((d) => { d.layoutSettings[field] = value; return d; }),
 
     setEducation: (id, field, value) =>
       update((d) => { const r = d.education.find((x) => x.id === id); if (r) r[field] = value; return d; }),

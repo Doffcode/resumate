@@ -1,4 +1,69 @@
 // Small presentational controls for the editor sidebar.
+import { useRef } from 'react';
+
+// Wraps (or unwraps, if already wrapped) the current text-field selection in
+// **bold** markers — the same syntax src/resume/text.jsx's renderBold() reads
+// back out at render time. No-ops when nothing is selected.
+function toggleBoldSelection(el, value, onChange) {
+  if (!el) return;
+  const start = el.selectionStart ?? 0;
+  const end = el.selectionEnd ?? 0;
+  if (start === end) return;
+  const selected = value.slice(start, end);
+  const before = value.slice(0, start);
+  const after = value.slice(end);
+  const alreadyBold = selected.length >= 4 && selected.startsWith('**') && selected.endsWith('**');
+  let next, newStart, newEnd;
+  if (alreadyBold) {
+    const inner = selected.slice(2, -2);
+    next = before + inner + after;
+    newStart = start;
+    newEnd = start + inner.length;
+  } else {
+    next = `${before}**${selected}**${after}`;
+    newStart = start;
+    newEnd = end + 4;
+  }
+  onChange(next);
+  requestAnimationFrame(() => {
+    el.focus();
+    el.setSelectionRange(newStart, newEnd);
+  });
+}
+
+export function BoldButton({ inputRef, value, onChange, title = 'Bold the selected text' }) {
+  return (
+    <button
+      type="button"
+      className="rm-bold-btn"
+      title={title}
+      aria-label={title}
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={() => toggleBoldSelection(inputRef.current, value ?? '', onChange)}
+    >
+      B
+    </button>
+  );
+}
+
+// A single-line rich-text input: a plain <input> plus a Bold button that
+// operates on it. Used wherever a bare <input> previously stood in for
+// content that can now carry emphasis (bullets, areas, activities).
+export function RichLineInput({ value, onChange, placeholder }) {
+  const ref = useRef(null);
+  return (
+    <>
+      <input
+        ref={ref}
+        className="rm-input"
+        value={value ?? ''}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      <BoldButton inputRef={ref} value={value ?? ''} onChange={onChange} />
+    </>
+  );
+}
 export const Icon = ({ d, size = 15, className = '' }) => (
   <svg className={`rm-icon ${className}`.trim()} viewBox="0 0 24 24" style={{ width: size, height: size }}>
     {d.map((path, i) => <path key={i} d={path} />)}
@@ -33,12 +98,19 @@ export function Switch({ checked, onChange, label }) {
   );
 }
 
-export function Field({ label, value, onChange, placeholder, textarea }) {
+export function Field({ label, value, onChange, placeholder, textarea, richText }) {
   const Tag = textarea ? 'textarea' : 'input';
+  const ref = useRef(null);
   return (
     <div className="rm-field">
-      {label && <label>{label}</label>}
+      {label && (
+        <div className="rm-field-label-row">
+          <label>{label}</label>
+          {richText && <BoldButton inputRef={ref} value={value ?? ''} onChange={onChange} />}
+        </div>
+      )}
       <Tag
+        ref={ref}
         className={textarea ? 'rm-textarea' : 'rm-input'}
         value={value ?? ''}
         placeholder={placeholder}

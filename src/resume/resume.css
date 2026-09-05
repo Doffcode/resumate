@@ -229,6 +229,18 @@
   justify-content: space-between;
   align-items: baseline;
 }
+/* Long titles that wrap: date moves into the title's own text flow (see
+   ItemHeader in parts.jsx) so it lands on the line the title actually ends
+   on, instead of staying pinned to line 1 in the flex layout above. */
+.resume-item-header--wrapped {
+  display: block;
+}
+.resume-item-header--wrapped .resume-item-title {
+  display: inline;
+}
+.resume-item-header--wrapped .resume-item-date {
+  margin-left: 0.4em;
+}
 .resume-item-title {
   font-weight: bold;
   font-size: 1em;

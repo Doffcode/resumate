@@ -4,7 +4,7 @@ import { LIMITS } from '../state/useResumeData.js';
 import { resolveSectionTitle } from '../resume/text.jsx';
 import { fileToResizedDataUrl, PhotoError } from '../lib/photo.js';
 import defaultPhoto from '../assets/student_photo.png';
-import { Icon, icons, Switch, Field, IconBtn, Breaker, AddButton, ItemControls } from './controls.jsx';
+import { Icon, icons, Switch, Field, IconBtn, Breaker, AddButton, ItemControls, RichLineInput } from './controls.jsx';
 
 const ITEM_SECTIONS = ['internships', 'projects', 'positions'];
 
@@ -184,18 +184,17 @@ function ItemListEditor({ rd, secId }) {
             </div>
             <Field label="Title" value={item.title} onChange={(v) => rd.setItem(secId, item.id, 'title', v)} />
             <Field label="Date range" value={item.date} placeholder="Jan 2026 - Mar 2026" onChange={(v) => rd.setItem(secId, item.id, 'date', v)} />
-            <Field label="Description" textarea value={item.description} onChange={(v) => rd.setItem(secId, item.id, 'description', v)} />
+            <Field label="Description" textarea richText value={item.description} onChange={(v) => rd.setItem(secId, item.id, 'description', v)} />
 
             <div className="rm-field">
               <label>Bullet points <span style={{ color: 'var(--rm-text-3)', fontWeight: 400 }}>· optional</span></label>
               {(item.bullets || []).map((b, bi) => (
                 <div className="rm-bullet-row" key={bi}>
                   <span className="rm-bullet-dot">•</span>
-                  <input
-                    className="rm-input"
+                  <RichLineInput
                     value={b}
                     placeholder="Type a bullet point"
-                    onChange={(e) => rd.setBullet(secId, item.id, bi, e.target.value)}
+                    onChange={(v) => rd.setBullet(secId, item.id, bi, v)}
                   />
                   <IconBtn icon="trash" title="Remove bullet" danger onClick={() => rd.removeBullet(secId, item.id, bi)} />
                 </div>
@@ -221,15 +220,31 @@ function ItemListEditor({ rd, secId }) {
 
 function AreasEditor({ rd }) {
   const items = rd.data.areas;
+  const spacing = rd.data.layoutSettings.areasLineSpacing ?? 0.8;
   return (
     <>
+      <div className="rm-field">
+        <div className="rm-field-label-row">
+          <label>Spacing between lines</label>
+          <span className="rm-hint" style={{ margin: 0 }}>{spacing.toFixed(1)}em</span>
+        </div>
+        <input
+          type="range"
+          className="rm-range"
+          min="0.2"
+          max="1.4"
+          step="0.1"
+          value={spacing}
+          onChange={(e) => rd.setLayoutSetting('areasLineSpacing', parseFloat(e.target.value))}
+        />
+      </div>
       {items.map((item, i) => (
         <div key={item.id}>
           {i > 0 && <Breaker on={!!item.pageBreak} onToggle={() => rd.toggleItemBreak('areas', item.id)} />}
           <div className="rm-bullet-row" style={{ marginTop: 9 }}>
             <span className="rm-bullet-dot">•</span>
-            <input className="rm-input" value={item.text} placeholder="Area of interest"
-              onChange={(e) => rd.setItem('areas', item.id, 'text', e.target.value)} />
+            <RichLineInput value={item.text} placeholder="Area of interest"
+              onChange={(v) => rd.setItem('areas', item.id, 'text', v)} />
             <IconBtn icon="up" title="Move up" disabled={i === 0} onClick={() => rd.moveItem('areas', item.id, -1)} />
             <IconBtn icon="down" title="Move down" disabled={i === items.length - 1} onClick={() => rd.moveItem('areas', item.id, 1)} />
             <IconBtn icon="trash" title="Delete" danger onClick={() => rd.removeItem('areas', item.id)} />
@@ -261,7 +276,7 @@ function SkillsEditor({ rd }) {
             </div>
             <Field label="Category" value={item.label} placeholder="Programming Languages"
               onChange={(v) => rd.setItem('skills', item.id, 'label', v)} />
-            <Field label="Items" value={item.value} placeholder="C, C++, Python"
+            <Field label="Items" richText value={item.value} placeholder="C, C++, Python"
               onChange={(v) => rd.setItem('skills', item.id, 'value', v)} />
           </div>
         </div>
@@ -285,8 +300,8 @@ function ExtrasEditor({ rd }) {
         {ex[kind].map((item) => (
           <div className="rm-bullet-row" key={item.id} style={{ marginTop: 7 }}>
             <span className="rm-bullet-dot">•</span>
-            <input className="rm-input" value={item.text} placeholder="Activity"
-              onChange={(e) => rd.setExtra(kind, item.id, e.target.value)} />
+            <RichLineInput value={item.text} placeholder="Activity"
+              onChange={(v) => rd.setExtra(kind, item.id, v)} />
             <IconBtn icon="trash" title="Delete" danger onClick={() => rd.removeExtra(kind, item.id)} />
           </div>
         ))}

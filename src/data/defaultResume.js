@@ -112,7 +112,8 @@ export const defaultResume = {
     extracurriculars: true
   },
   layoutSettings: {
-    baseFontSize: 16 // 16px matches the original PDF's 12pt size
+    baseFontSize: 16, // 16px matches the original PDF's 12pt size
+    areasLineSpacing: 0.8 // em, matches the built-in gap between item entries
   }
 };
 
