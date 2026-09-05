@@ -35,7 +35,19 @@ export function useJdMatch() {
     if (!session) throw new Error('You need to be signed in to use the AI assistant.');
 
     const { data, error } = await supabase.functions.invoke('match-jd', { body });
-    if (error) throw new Error(error.message || 'The AI service did not respond.');
+    if (error) {
+      // supabase-js's default error.message is just "Edge Function returned a
+      // non-2xx status code" regardless of why — the actual reason is JSON in
+      // the response body, reachable only through error.context (a Response).
+      let message = error.message || 'The AI service did not respond.';
+      if (error.context && typeof error.context.json === 'function') {
+        try {
+          const body = await error.context.json();
+          if (body?.error) message = body.error;
+        } catch { /* body wasn't JSON — keep the generic message */ }
+      }
+      throw new Error(message);
+    }
     if (data?.error) throw new Error(data.error);
     return data;
   }, []);
