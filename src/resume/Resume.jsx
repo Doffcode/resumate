@@ -6,14 +6,16 @@
 import { Header, Footer, Unit, unitTypeClass } from './parts.jsx';
 import './resume.css';
 
-// Areas of Interest is the one section with a user-adjustable item spacing
-// (data.layoutSettings.areasLineSpacing). Every other section keeps the
-// fixed spacing in resume.css's .page-unit.unit-item rule. Returns undefined
-// (no inline override) for anything else, or when unset, so the CSS default
-// applies exactly as before.
+// Every bulleted-item unit shares one user-adjustable spacing
+// (data.layoutSettings.itemSpacing), overriding resume.css's fixed
+// .page-unit.unit-item margin-top — kept in one place, applied uniformly, so
+// the resume can't end up with inconsistent spacing between sections (the
+// T&P guide flags uneven spacing as a mistake). Extracurricular sub-items
+// are a 'subblock' unit, not 'item', and get the same value passed as a prop
+// instead — see Subblock in parts.jsx.
 function unitStyle(u, data) {
-  if (u.kind === 'item' && u.sec.type === 'areas') {
-    const spacing = data.layoutSettings?.areasLineSpacing;
+  if (u.kind === 'item') {
+    const spacing = data.layoutSettings?.itemSpacing;
     if (spacing != null) return { marginTop: `${spacing}em` };
   }
   return undefined;

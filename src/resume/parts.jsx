@@ -157,10 +157,11 @@ export function Subblock({ data, subType }) {
   const isSport = subType === 'sport';
   const items = isSport ? data.extracurriculars.sport : data.extracurriculars.social;
   if (items.length === 0) return null;
+  const spacing = data.layoutSettings?.itemSpacing ?? 0.8;
   return (
     <>
       <div className="resume-subheading">{isSport ? 'Sports Activities:' : 'Social Activities:'}</div>
-      <div className="resume-items-container" style={{ gap: '0.2em', marginBottom: '0.5em' }}>
+      <div className="resume-items-container" style={{ gap: `${spacing}em`, marginBottom: '0.5em' }}>
         {items.map((item) => (
           <div className="resume-item" key={item.id}><span>{renderBold(capitalizeFirst(item.text))}</span></div>
         ))}

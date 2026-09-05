@@ -113,7 +113,11 @@ export const defaultResume = {
   },
   layoutSettings: {
     baseFontSize: 16, // 16px matches the original PDF's 12pt size
-    areasLineSpacing: 0.8 // em, matches the built-in gap between item entries
+    // em, gap between bulleted entries — shared by every such section
+    // (Projects, Internships, Positions, Areas of Interest, Skills,
+    // Extracurricular Activities) so the resume stays uniformly spaced,
+    // per the T&P guide's own "maintain uniform spacing" rule.
+    itemSpacing: 0.8
   }
 };
 

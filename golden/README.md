@@ -6,7 +6,7 @@ verified by rendering the app and pixel-diffing against `page-1.png` /
 
 | File | What it is |
 |---|---|
-| `golden-reference.pdf` | Current baseline. sha256 `c0530798…` |
+| `golden-reference.pdf` | Current baseline. sha256 `55535494…` |
 | `page-1.png`, `page-2.png` | Same, rasterised at 110 DPI — the pixel-diff targets |
 | `generator/` | Superseded. The app itself now renders the baseline (it was verified 0-pixel identical to this). Kept only as history. |
 | `archive/golden-v1-preguide.pdf` | The Aug 10 prototype output, before the Common Mistakes rules were applied |
@@ -26,6 +26,17 @@ Source of the rules: `../reference/Resume Common Mistakes.pdf` (T&P, 8 pages,
    See `resolveSectionTitle()` in `generator/src/App.jsx`.
 
 Page 2 was byte-identical across v1 → v2; all changes are on page 1.
+
+## v2 → v3: shared, adjustable item spacing
+
+Extracurricular Activities' Sports/Social entries used to be gapped at a
+hardcoded `0.2em`, tighter than every other bulleted section's `0.8em`
+(Projects, Internships, Positions, Areas of Interest, Skills). Introducing
+one shared, user-adjustable spacing setting (`layoutSettings.itemSpacing`,
+a slider in the editor) meant picking one default — `0.8em` won, to match
+the other five sections and because the T&P guide requires uniform spacing
+between sections (rules 2 & 5). Extracurricular Activities' page-2 gaps
+widened accordingly; page 1 is unaffected.
 
 ## Known rule not yet satisfied
 

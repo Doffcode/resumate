@@ -161,11 +161,39 @@ function EducationEditor({ rd }) {
   );
 }
 
+// Shared by every bulleted-list section editor (Projects/Internships/
+// Positions, Areas, Skills, Extracurriculars) — one slider controlling
+// data.layoutSettings.itemSpacing, which every one of those sections reads
+// at render time. Kept as one control so the resume can't drift into the
+// uneven spacing the T&P guide flags as a mistake.
+function SpacingControl({ rd }) {
+  const spacing = rd.data.layoutSettings.itemSpacing ?? 0.8;
+  return (
+    <div className="rm-field">
+      <div className="rm-field-label-row">
+        <label>Spacing between lines</label>
+        <span className="rm-hint" style={{ margin: 0 }}>{spacing.toFixed(1)}em</span>
+      </div>
+      <input
+        type="range"
+        className="rm-range"
+        min="0.2"
+        max="1.4"
+        step="0.1"
+        value={spacing}
+        onChange={(e) => rd.setLayoutSetting('itemSpacing', parseFloat(e.target.value))}
+      />
+      <div className="rm-hint">Applies everywhere — Projects, Internships, Positions, Areas of Interest, Skills and Extracurricular Activities all share this so the resume stays evenly spaced.</div>
+    </div>
+  );
+}
+
 function ItemListEditor({ rd, secId }) {
   const items = rd.data[secId];
   const limit = LIMITS[secId];
   return (
     <>
+      <SpacingControl rd={rd} />
       {items.map((item, i) => (
         <div key={item.id}>
           {i > 0 && (
@@ -220,24 +248,9 @@ function ItemListEditor({ rd, secId }) {
 
 function AreasEditor({ rd }) {
   const items = rd.data.areas;
-  const spacing = rd.data.layoutSettings.areasLineSpacing ?? 0.8;
   return (
     <>
-      <div className="rm-field">
-        <div className="rm-field-label-row">
-          <label>Spacing between lines</label>
-          <span className="rm-hint" style={{ margin: 0 }}>{spacing.toFixed(1)}em</span>
-        </div>
-        <input
-          type="range"
-          className="rm-range"
-          min="0.2"
-          max="1.4"
-          step="0.1"
-          value={spacing}
-          onChange={(e) => rd.setLayoutSetting('areasLineSpacing', parseFloat(e.target.value))}
-        />
-      </div>
+      <SpacingControl rd={rd} />
       {items.map((item, i) => (
         <div key={item.id}>
           {i > 0 && <Breaker on={!!item.pageBreak} onToggle={() => rd.toggleItemBreak('areas', item.id)} />}
@@ -260,6 +273,7 @@ function SkillsEditor({ rd }) {
   const items = rd.data.skills;
   return (
     <>
+      <SpacingControl rd={rd} />
       {items.map((item, i) => (
         <div key={item.id}>
           {i > 0 && <Breaker on={!!item.pageBreak} onToggle={() => rd.toggleItemBreak('skills', item.id)} />}
@@ -310,5 +324,5 @@ function ExtrasEditor({ rd }) {
     </div>
   );
   // Sports first, then Social — matches the target format.
-  return <>{group('sport', 'Sports Activities')}{group('social', 'Social Activities')}</>;
+  return <><SpacingControl rd={rd} />{group('sport', 'Sports Activities')}{group('social', 'Social Activities')}</>;
 }
